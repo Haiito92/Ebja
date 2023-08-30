@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4043528a081368d4c95a8cbb31b09ff4, type: 3}
+  m_Name: Onalys
+  m_EditorClassIdentifier: 
+  name: Onalys
+  description: "M\xE8re de la tribu des nomades, elle s'efforce d'\xE9couter et de
+    r\xE9pondre avec sagesse \xE0 chacune des interrogations du clan."
+  spriteCombat: {fileID: 0}
+  spriteMenu: {fileID: 0}
+  portrait: {fileID: 0}
+  lvl: 50
+  elevationLvl: 2
+  atk:
+    baseValue: 500
+  def:
+    baseValue: 2000
+  hp:
+    baseValue: 4000
+  speed:
+    baseValue: 130
+  critChance:
+    baseValue: 30
+  critDmg:
+    baseValue: 60
