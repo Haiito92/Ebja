@@ -15,7 +15,7 @@ public class DataPart : MonoBehaviour
     public TextMeshProUGUI nameText;
 
     public TextMeshProUGUI lvlValueText;
-    public Image[] elevationMarks;
+    public ElevationMark[] elevationMarks;
 
     public TextMeshProUGUI atkText;
     public TextMeshProUGUI defText;
@@ -68,11 +68,11 @@ public class DataPart : MonoBehaviour
             {
                 if (i < charData.elevationLvl)
                 {
-                    elevationMarks[i].color = Color.white;
+                    elevationMarks[i].elevationMarkIcon.sprite = elevationMarks[i].fullMark;
                 }
                 else
                 {
-                    elevationMarks[i].color = Color.red;
+                    elevationMarks[i].elevationMarkIcon.sprite = elevationMarks[i].emptyMark;
                 }
             }
 

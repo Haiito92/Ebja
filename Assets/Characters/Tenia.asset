@@ -20,6 +20,7 @@ MonoBehaviour:
   spriteCombat: {fileID: 0}
   spriteMenu: {fileID: 0}
   portrait: {fileID: 0}
+  tribe: 1
   lvl: 40
   elevationLvl: 1
   atk:

@@ -10,7 +10,8 @@ public class CharacterData : ScriptableObject
     public Sprite spriteCombat;
     public Sprite spriteMenu;
     public Sprite portrait;
-    
+
+    public Tribe tribe;
 
     public int lvl;
     public int elevationLvl;
@@ -24,3 +25,5 @@ public class CharacterData : ScriptableObject
 
 
 }
+
+public enum Tribe { Liberty, Purity, Knowledge, Order }
