@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: ff12ce90db6179b408492fad78c24fcc
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Ysabeau Infant
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1191a514ba8cd3f4da9d06bcf7eacc4d, type: 3}
+  - {fileID: 12800000, guid: 777f2c6dce96b844cbc62a312ca2f7ad, type: 3}
+  - {fileID: 12800000, guid: 1a6d76eea9cc20e45b28bfd90dc34530, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
