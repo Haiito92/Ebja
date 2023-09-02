@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Tenia's Source
   m_EditorClassIdentifier: 
   name: Tenia's Source
+  icon: {fileID: 21300000, guid: 4b58dcd5f88cd254aa837da471d88c7f, type: 3}
   typeName: Purity's Red
   typeColor: {r: 0.53333336, g: 0.28627452, b: 0.2509804, a: 1}
-  esIcon: {fileID: 21300000, guid: 4b58dcd5f88cd254aa837da471d88c7f, type: 3}
   esEffect: Add one turn to every buff set by the character.
   lvl: 25
   superpositionLvl: 5

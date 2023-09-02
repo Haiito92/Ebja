@@ -59,7 +59,13 @@ public class DataPart : MonoBehaviour
     [Header("Relics Tab")]
     [Space]
 
-    public TextMeshProUGUI relicsTab;
+    public TextMeshProUGUI relicTabAtkText;
+    public TextMeshProUGUI relicTabDefText;
+    public TextMeshProUGUI relicTabHpText;
+    public TextMeshProUGUI relicTabSpeedText;
+    public TextMeshProUGUI relicTabCritChanceText;
+    public TextMeshProUGUI relicTabCritDmgText;
+
     #endregion
 
     #region EidolonsTabVariables
@@ -113,7 +119,7 @@ public class DataPart : MonoBehaviour
             esNameText.text = charData.energySource.name;
             esTypeText.text = charData.energySource.typeName;
             esTypeText.color = charData.energySource.typeColor;
-            esIcon.sprite = charData.energySource.esIcon;
+            esIcon.sprite = charData.energySource.icon;
 
             esEffectText.text = charData.energySource.esEffect;
 
@@ -139,12 +145,24 @@ public class DataPart : MonoBehaviour
 
             #endregion
 
-            #region Undone
-            tracesTab.text = "Traces of " + charData.name;
-            relicsTab.text = "Relics of " + charData.name;
+
+            #region LoeadRelicsTab
+
+            relicTabAtkText.text = "Atk : " + charData.atk.GetValue();
+            relicTabDefText.text = "Def : " + charData.def.GetValue();
+            relicTabHpText.text = "Hp : " + charData.hp.GetValue();
+            relicTabSpeedText.text = "Speed : " + charData.speed.GetValue();
+            relicTabCritChanceText.text = "CritChance : " + charData.critChance.GetValue();
+            relicTabCritDmgText.text = "CritDmg : " + charData.critDmg.GetValue();
+
+        #endregion
+
+        #region Undone
+        tracesTab.text = "Traces of " + charData.name;
+            
             eidolonsTab.text = "Eidolons of " + charData.name;
             informationsTab.text = "Informations of " + charData.name;
-            #endregion
+        #endregion
 
         }
 

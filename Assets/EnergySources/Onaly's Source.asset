@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Onaly's Source
   m_EditorClassIdentifier: 
   name: Onaly's Source
+  icon: {fileID: 21300000, guid: 204308aba96084f4b95440f693c995c4, type: 3}
   typeName: Leviathan's Blue
   typeColor: {r: 0.3019608, g: 0.5176471, b: 0.70980394, a: 1}
-  esIcon: {fileID: 21300000, guid: 204308aba96084f4b95440f693c995c4, type: 3}
   esEffect: Lower de energy cost of the ultimate.
   lvl: 35
   superpositionLvl: 3
