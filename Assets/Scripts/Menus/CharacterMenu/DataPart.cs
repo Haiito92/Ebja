@@ -9,13 +9,14 @@ public class DataPart : MonoBehaviour
 
     public GameObject[] tabs;
 
+    #region AttributesTabVariables
     [Header("Attributes Tab")]
     [Space]
 
     public TextMeshProUGUI nameText;
 
     public TextMeshProUGUI lvlValueText;
-    public Image[] elevationMarks;
+    public ElevationMark[] elevationMarks;
 
     public TextMeshProUGUI atkText;
     public TextMeshProUGUI defText;
@@ -23,36 +24,59 @@ public class DataPart : MonoBehaviour
     public TextMeshProUGUI speedText;
     public TextMeshProUGUI critChanceText;
     public TextMeshProUGUI critDmgText;
+    #endregion
 
+    #region EnergySourceTabVariables
     [Space]
-    [Header("Lightcone Tab")]
+    [Header("EnergySource Tab")]
     [Space]
 
-    public TextMeshProUGUI lightconeTab;
+    public Image esIcon;
+    public TextMeshProUGUI esNameText;
+    public TextMeshProUGUI esTypeText;
 
+    public TextMeshProUGUI esEffectText;
+
+    public TextMeshProUGUI esLevelValueText;
+    public ElevationMark[] superpositionMarks;
+
+    public TextMeshProUGUI esAtktext;
+    public TextMeshProUGUI esDeftext;
+    public TextMeshProUGUI esHptext;
+
+    #endregion
+
+    #region TracesTabVariables
     [Space]
     [Header("Traces Tab")]
     [Space]
 
     public TextMeshProUGUI tracesTab;
+    #endregion
 
+    #region RelicsTabVariables
     [Space]
     [Header("Relics Tab")]
     [Space]
 
     public TextMeshProUGUI relicsTab;
+    #endregion
 
+    #region EidolonsTabVariables
     [Space]
     [Header("Eidolons Tab")]
     [Space]
 
     public TextMeshProUGUI eidolonsTab;
+    #endregion
 
+    #region InformationsTabVariables
     [Space]
     [Header("Informations Tab")]
     [Space]
 
     public TextMeshProUGUI informationsTab;
+    #endregion
 
     public void LoadDataPart(CharacterData charData)
     {
@@ -68,11 +92,11 @@ public class DataPart : MonoBehaviour
             {
                 if (i < charData.elevationLvl)
                 {
-                    elevationMarks[i].color = Color.white;
+                    elevationMarks[i].elevationMarkIcon.sprite = elevationMarks[i].fullMark;
                 }
                 else
                 {
-                    elevationMarks[i].color = Color.red;
+                    elevationMarks[i].elevationMarkIcon.sprite = elevationMarks[i].emptyMark;
                 }
             }
 
@@ -84,12 +108,43 @@ public class DataPart : MonoBehaviour
             critDmgText.text = "CritDmg : " + charData.critDmg.GetValue();
             #endregion
 
-            lightconeTab.text = "LightCone of " + charData.name;
+            #region LoadEnergySource
+
+            esNameText.text = charData.energySource.name;
+            esTypeText.text = charData.energySource.typeName;
+            esTypeText.color = charData.energySource.typeColor;
+            esIcon.sprite = charData.energySource.esIcon;
+
+            esEffectText.text = charData.energySource.esEffect;
+
+            esLevelValueText.text = charData.energySource.lvl.ToString() + " / 80";
+            for (int i = 0; i < superpositionMarks.Length; i++)
+            {
+                if (i < charData.energySource.superpositionLvl)
+                {
+                    superpositionMarks[i].elevationMarkIcon.sprite = superpositionMarks[i].fullMark;
+                }
+                else
+                {
+                    superpositionMarks[i].elevationMarkIcon.sprite = superpositionMarks[i].emptyMark;
+                }
+
+
+            }
+
+
+            esAtktext.text = "Atk : " + charData.energySource.atk.GetValue();
+            esDeftext.text = "Def : " + charData.energySource.def.GetValue();
+            esHptext.text = "Hp : " + charData.energySource.hp.GetValue();
+
+            #endregion
+
+            #region Undone
             tracesTab.text = "Traces of " + charData.name;
             relicsTab.text = "Relics of " + charData.name;
             eidolonsTab.text = "Eidolons of " + charData.name;
             informationsTab.text = "Informations of " + charData.name;
-
+            #endregion
 
         }
 
