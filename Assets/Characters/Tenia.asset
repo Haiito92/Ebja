@@ -20,6 +20,7 @@ MonoBehaviour:
   spriteCombat: {fileID: 0}
   spriteMenu: {fileID: 0}
   portrait: {fileID: 0}
+  tribe: 1
   lvl: 40
   elevationLvl: 1
   atk:
@@ -34,3 +35,4 @@ MonoBehaviour:
     baseValue: 50
   critDmg:
     baseValue: 100
+  energySource: {fileID: 11400000, guid: cf8ee00fe47bde142a0ea4b571c1da75, type: 2}

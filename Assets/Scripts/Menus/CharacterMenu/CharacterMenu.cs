@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterMenu : MonoBehaviour
 {
 
-    
-    
-    
+
+
+
     //variables pour un test
-    
+    public Image backgroundMenu;
+    public Sprite[] backgroundSprites;
+
     public CharacterData Tenia;
     public CharacterData Onarys;
 
@@ -17,18 +20,13 @@ public class CharacterMenu : MonoBehaviour
 
     private void Start()
     {
-        dataPart.LoadDataPart(Tenia);
+        LoadMenu(Onarys);
     }
 
-    private void Update()
+    public void LoadMenu(CharacterData chardata)
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            dataPart.LoadDataPart(Tenia);
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            dataPart.LoadDataPart(Onarys);
-        }
+        dataPart.LoadDataPart(chardata);
+        backgroundMenu.sprite = backgroundSprites[(int)chardata.tribe];
+
     }
 }
