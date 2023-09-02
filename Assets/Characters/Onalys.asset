@@ -33,3 +33,4 @@ MonoBehaviour:
     baseValue: 30
   critDmg:
     baseValue: 60
+  energySource: {fileID: 11400000, guid: bf94be96b3adf9840a3b7921367d4a9a, type: 2}
