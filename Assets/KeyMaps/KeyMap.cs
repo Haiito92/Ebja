@@ -72,6 +72,15 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""HorizontalMovement"",
+                    ""type"": ""Value"",
+                    ""id"": ""12fee693-7cde-4ec3-a842-816a2e3ec6a4"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -96,6 +105,39 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
                     ""action"": ""RemoveItem"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""47178e29-e79a-4f58-bf4f-11e40d68f714"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HorizontalMovement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""b9d423a8-3306-4546-a335-1ceb4eaa7677"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HorizontalMovement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""9a4f6d4e-1623-4295-9cd3-e546bc1a5b82"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HorizontalMovement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -109,6 +151,7 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
         m_Tests = asset.FindActionMap("Tests", throwIfNotFound: true);
         m_Tests_SpawnItem = m_Tests.FindAction("SpawnItem", throwIfNotFound: true);
         m_Tests_RemoveItem = m_Tests.FindAction("RemoveItem", throwIfNotFound: true);
+        m_Tests_HorizontalMovement = m_Tests.FindAction("HorizontalMovement", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -218,12 +261,14 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
     private List<ITestsActions> m_TestsActionsCallbackInterfaces = new List<ITestsActions>();
     private readonly InputAction m_Tests_SpawnItem;
     private readonly InputAction m_Tests_RemoveItem;
+    private readonly InputAction m_Tests_HorizontalMovement;
     public struct TestsActions
     {
         private @KeyMap m_Wrapper;
         public TestsActions(@KeyMap wrapper) { m_Wrapper = wrapper; }
         public InputAction @SpawnItem => m_Wrapper.m_Tests_SpawnItem;
         public InputAction @RemoveItem => m_Wrapper.m_Tests_RemoveItem;
+        public InputAction @HorizontalMovement => m_Wrapper.m_Tests_HorizontalMovement;
         public InputActionMap Get() { return m_Wrapper.m_Tests; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -239,6 +284,9 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
             @RemoveItem.started += instance.OnRemoveItem;
             @RemoveItem.performed += instance.OnRemoveItem;
             @RemoveItem.canceled += instance.OnRemoveItem;
+            @HorizontalMovement.started += instance.OnHorizontalMovement;
+            @HorizontalMovement.performed += instance.OnHorizontalMovement;
+            @HorizontalMovement.canceled += instance.OnHorizontalMovement;
         }
 
         private void UnregisterCallbacks(ITestsActions instance)
@@ -249,6 +297,9 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
             @RemoveItem.started -= instance.OnRemoveItem;
             @RemoveItem.performed -= instance.OnRemoveItem;
             @RemoveItem.canceled -= instance.OnRemoveItem;
+            @HorizontalMovement.started -= instance.OnHorizontalMovement;
+            @HorizontalMovement.performed -= instance.OnHorizontalMovement;
+            @HorizontalMovement.canceled -= instance.OnHorizontalMovement;
         }
 
         public void RemoveCallbacks(ITestsActions instance)
@@ -274,5 +325,6 @@ public partial class @KeyMap: IInputActionCollection2, IDisposable
     {
         void OnSpawnItem(InputAction.CallbackContext context);
         void OnRemoveItem(InputAction.CallbackContext context);
+        void OnHorizontalMovement(InputAction.CallbackContext context);
     }
 }

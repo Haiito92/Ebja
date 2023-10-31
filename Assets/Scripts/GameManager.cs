@@ -7,28 +7,37 @@ public class GameManager : MonoBehaviour
     /// Test Variables ///
     //////////////////////
 
-    [SerializeField] Inventory inventory;
+    //Test Movement
+
+
+    //Test Inventory
+    //[SerializeField] Inventory inventory;
 
     //////////////////////
     /// Test Functions ///
     //////////////////////
+    #region TestMovement
 
-    public void SpawnItem(InputAction.CallbackContext ctx)
-    {
-        if(ctx.started)
-        {
-            ItemData item = new ItemData();
-            int index = Random.Range(0, DatabaseManager.Instance.ItemDatabase.Datas.Count);
-            item.Init(DatabaseManager.Instance.ItemDatabase.Datas[index]);
-            inventory.Add(item);
-        }
-    }
+    #endregion
 
-    public void RemoveItem(InputAction.CallbackContext ctx)
-    {
-        if (ctx.started && inventory.Items.Count > 0)
-        {
-            inventory.Remove(inventory.Items[0]);
-        }
-    }
+    #region Test Inventory
+    //public void SpawnItem(InputAction.CallbackContext ctx)
+    //{
+    //    if(ctx.started)
+    //    {
+    //        ItemData item = new ItemData();
+    //        int index = Random.Range(0, DatabaseManager.Instance.ItemDatabase.Datas.Count);
+    //        item.Init(DatabaseManager.Instance.ItemDatabase.Datas[index]);
+    //        inventory.Add(item);
+    //    }
+    //}
+
+    //public void RemoveItem(InputAction.CallbackContext ctx)
+    //{
+    //    if (ctx.started && inventory.Items.Count > 0)
+    //    {
+    //        inventory.Remove(inventory.Items[0]);
+    //    }
+    //}
+    #endregion
 }
