@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -17,17 +19,31 @@ public class PlayerController : MonoBehaviour
     //Coroutines
     Coroutine _walking;
 
+    //Events
+    public UnityEvent OnStartWalkingEvent;
+    public UnityEvent OnStopWalkingEvent;
+
+    //Actions
+    public Action OnStartWalking;
+    public Action OnStopWalking;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
 
         _walk.action.started += StartWalking;
         _walk.action.canceled += StopWalking;
+
+        OnStartWalkingEvent.AddListener(() => OnStartWalking?.Invoke());
     }
 
     void StartWalking(InputAction.CallbackContext ctx)
     {
-        _walking = StartCoroutine(Walking());
+        if (_walking == null)
+        {
+            _walking = StartCoroutine(Walking());
+            OnStartWalkingEvent?.Invoke();
+        }
     }
 
     IEnumerator Walking()
@@ -48,6 +64,7 @@ public class PlayerController : MonoBehaviour
             _walking = null;
         }
         _rb.velocity = Vector2.zero;
+        OnStopWalkingEvent?.Invoke();
     }
 
     private void OnDisable()
