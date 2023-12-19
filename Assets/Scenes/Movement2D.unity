@@ -132,9 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 217602053}
-  - component: {fileID: 217602052}
   - component: {fileID: 217602051}
-  - component: {fileID: 217602050}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -142,20 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &217602050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 217602049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45013655c329bf14b9a641db8a7ad7fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _items: []
-  _inventoryUI: {fileID: 0}
 --- !u!114 &217602051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,88 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7d7ebba2ff16549ab651d93b205587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &217602052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 217602049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 9ff9b3c5addf78844b44c63ab934caf5, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: e45b1397-04c5-412f-86fb-1bf16e2bacc6
-    m_ActionName: Controls/Movement
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 217602051}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: SpawnItem
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 0ef4bdd9-4a87-4bc1-8575-6b28692df1fc
-    m_ActionName: Tests/SpawnItem[/Keyboard/s]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 217602051}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: RemoveItem
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 04539405-59da-45fd-809c-38adae25c265
-    m_ActionName: Tests/RemoveItem[/Keyboard/r]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1190795276}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: GetHorizontalMovement
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 12fee693-7cde-4ec3-a842-816a2e3ec6a4
-    m_ActionName: Tests/HorizontalMovement[/Keyboard/a,/Keyboard/d]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Tests
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!4 &217602053
 Transform:
   m_ObjectHideFlags: 0
@@ -322,6 +224,7 @@ GameObject:
   - component: {fileID: 1190795272}
   - component: {fileID: 1190795274}
   - component: {fileID: 1190795275}
+  - component: {fileID: 1190795277}
   - component: {fileID: 1190795276}
   m_Layer: 0
   m_Name: Player
@@ -481,7 +384,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b31152e1acf5e4f8c5b9be7b44369c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  _speed: 200
+  _walk: {fileID: 563137026078045555, guid: 32a26216dde7d21498eac6bcb6997a16, type: 3}
+--- !u!114 &1190795277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190795271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 32a26216dde7d21498eac6bcb6997a16, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Controls
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1689257306
 GameObject:
   m_ObjectHideFlags: 0
