@@ -5,36 +5,43 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    //Fields
-    [Header("Fields")]
+    //Fields//
+    [Header("Walk Fields")]
     [Space]
+    //Walk
     [SerializeField] float _speed;
+    bool _isFacingRight = true;
 
+    [Header("Jump Fields")]
+    [Space]
+    //Jump
     [SerializeField] float _jumpForce;
     [SerializeField] Transform _groundCheck;
     [SerializeField] float _groundCheckRadius;
     bool _isGrounded;
     [SerializeField] LayerMask _whatIsGround;
 
-    //References
+    //References//
     Rigidbody2D _rb;
 
-    //InputReferences
+    //InputReferences//
     [Header("InputAction References")]
     [Space]
     [SerializeField] InputActionReference _walk;
     [SerializeField] InputActionReference _jump;
 
-    //Coroutines
+    //Coroutines//
     Coroutine _walking;
 
-    //Events
+    //Events//
+    [Header("Events")]
+    [Space]
     public UnityEvent OnStartWalkingEvent;
     public UnityEvent OnStopWalkingEvent;
 
-    //Actions
+    //Actions//
     public Action OnStartWalking;
     public Action OnStopWalking;
 
@@ -65,6 +72,16 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 direction = _walk.action.ReadValue<Vector2>();
             _rb.velocity = new Vector2(direction.x * _speed * Time.fixedDeltaTime, _rb.velocity.y);
+
+            if(_isFacingRight && direction.x < 0)
+            {
+                Flip();
+            }
+            else if(!_isFacingRight && direction.x > 0)
+            {
+                Flip();
+            }
+
             yield return new WaitForFixedUpdate();
         }
     }
@@ -80,6 +97,12 @@ public class PlayerController : MonoBehaviour
         OnStopWalkingEvent?.Invoke();
     }
     #endregion
+
+    void Flip()
+    {
+        transform.Rotate(new Vector3(0, 180 , 0));
+        _isFacingRight = !_isFacingRight;
+    }
 
     void Jump(InputAction.CallbackContext ctx)
     {
@@ -98,9 +121,9 @@ public class PlayerController : MonoBehaviour
         _jump.action.started -= Jump;
     }
 
-    //private void OnDrawGizmosSelected()
-    //{
-    //    Gizmos.color = Color.yellow;
-    //    Gizmos.DrawWireSphere(_groundCheck.position, _groundCheckRadius);
-    //}
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(_groundCheck.position, _groundCheckRadius);
+    }
 }
