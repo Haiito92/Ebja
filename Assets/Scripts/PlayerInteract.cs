@@ -12,14 +12,68 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] Transform _interactionCheck;
     [SerializeField] float _interactionRadius;
 
+    //References//
+    [Header("References")]
+    [Space]
+    PlayerMovement _playerMovement;
+
     //InputReferences//
     [Header("InputAction References")]
     [SerializeField] InputActionReference _interact;
 
+    //Coroutines//
+    Coroutine _checkForInteractable;
+
     private void Awake()
     {
+        _playerMovement = GetComponent<PlayerMovement>();
+
         _interact.action.started += Interact;
     }
+
+    private void Start()
+    {
+        _playerMovement.OnStartWalking += StartCheckForInteractable;
+        _playerMovement.OnStopWalking += StopCheckForInteractable;
+    }
+
+    #region CkeckForInteractableCoroutine;
+    void StartCheckForInteractable()
+    {
+        if( _checkForInteractable == null )
+        {
+            _checkForInteractable = StartCoroutine(CheckForInteractable());
+        }
+    }
+
+    IEnumerator CheckForInteractable()
+    {
+        IInteractable lastInteractable = null;
+        IInteractable currentInteractable = null;
+        while (true)
+        {
+            lastInteractable = currentInteractable;
+            currentInteractable = GetClosestInteractable();
+
+            if (currentInteractable != lastInteractable)
+            {
+                lastInteractable?.HideUI();
+                currentInteractable?.ShowUI();
+            }
+
+            yield return null;
+        }
+    }
+
+    void StopCheckForInteractable()
+    {
+        if( _checkForInteractable != null )
+        {
+            StopCoroutine( _checkForInteractable );
+            _checkForInteractable = null;
+        }
+    }
+    #endregion
 
     IInteractable GetClosestInteractable()
     {
@@ -54,6 +108,12 @@ public class PlayerInteract : MonoBehaviour
     {
         IInteractable interactable = GetClosestInteractable();
         if(interactable != null) interactable.Interact();
+    }
+
+    private void OnDisable()
+    {
+        _playerMovement.OnStartWalking -= StartCheckForInteractable;
+        _playerMovement.OnStopWalking -= StopCheckForInteractable;
     }
 
     private void OnDrawGizmos()
