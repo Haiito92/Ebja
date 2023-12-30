@@ -8,9 +8,14 @@ using UnityEngine.UIElements;
 
 public class DSGraphView : GraphView
 {
-    public DSGraphView() 
+    private DSEditorWindow _editorWindow;
+    private DSSearchWindow _searchWindow;
+
+    public DSGraphView(DSEditorWindow dsEditorWindow) 
     {
+        _editorWindow = dsEditorWindow;
         AddManipulators();
+        AddSearchWindow();
         GenerateGridBackground();
 
         AddStyles();
@@ -54,7 +59,7 @@ public class DSGraphView : GraphView
     private IManipulator CreateGroupContextualMenu()
     {
         ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
-            menuEvent => menuEvent.menu.AppendAction("Add Group", actionEvent => AddElement(CreateGroup("Dialogue Group", actionEvent.eventInfo.localMousePosition)))
+            menuEvent => menuEvent.menu.AppendAction("Add Group", actionEvent => AddElement(CreateGroup("Dialogue Group", GetLocalMousePosition(actionEvent.eventInfo.localMousePosition))))
         );
 
         return contextualMenuManipulator;
@@ -64,7 +69,7 @@ public class DSGraphView : GraphView
     private IManipulator CreateNodeContextualMenu(string actionTitle, DSDialogueType dialogueType)
     {
         ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
-            menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(dialogueType, actionEvent.eventInfo.localMousePosition)))
+            menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode(dialogueType, GetLocalMousePosition(actionEvent.eventInfo.localMousePosition))))
         );
 
         return contextualMenuManipulator;
@@ -72,7 +77,7 @@ public class DSGraphView : GraphView
     #endregion
 
     #region Elements Creation
-    private Group CreateGroup(string title, Vector2 localMousePosition)
+    public Group CreateGroup(string title, Vector2 localMousePosition)
     {
         Group group = new Group()
         {
@@ -84,7 +89,7 @@ public class DSGraphView : GraphView
         return group;
     }
 
-    private DSNode CreateNode(DSDialogueType dialogueType, Vector2 position)
+    public DSNode CreateNode(DSDialogueType dialogueType, Vector2 position)
     {
         Type nodeType = Type.GetType($"DS{dialogueType}Node");
 
@@ -98,6 +103,19 @@ public class DSGraphView : GraphView
     #endregion
 
     #region Elements Addition
+
+    private void AddSearchWindow()
+    {
+        if (_searchWindow == null)
+        {
+            _searchWindow = ScriptableObject.CreateInstance<DSSearchWindow>();
+
+            _searchWindow.Initialize(this);
+        }
+
+        nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
+    }
+
     private void GenerateGridBackground()
     {
         GridBackground gridBackground = new GridBackground();
@@ -106,7 +124,7 @@ public class DSGraphView : GraphView
 
         Insert(0, gridBackground);
     }
-
+    
     private void AddStyles()
     {
         this.AddStyleSheets(
@@ -114,5 +132,23 @@ public class DSGraphView : GraphView
             "Assets/Scripts/Editor/Resources/DialogueSystem/DSNodeStyles.uss"
         );
     }
+    #endregion
+
+    #region Utilities
+
+    public Vector2 GetLocalMousePosition(Vector2 mousePosition, bool isSearchWindow = false)
+    {
+        Vector2 worldMousePosition = mousePosition;
+
+        if (isSearchWindow)
+        {
+            worldMousePosition -= _editorWindow.position.position;
+        }
+
+        Vector2 localMousePosition = contentViewContainer.WorldToLocal(worldMousePosition);
+
+        return localMousePosition;
+    }
+
     #endregion
 }

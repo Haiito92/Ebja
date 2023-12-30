@@ -25,7 +25,7 @@ public class DSEditorWindow : EditorWindow
     #region Elements Addition
     private void GenerateGraphView()
     {
-        DSGraphView graphView = new DSGraphView();
+        DSGraphView graphView = new DSGraphView(this);
 
         graphView.StretchToParentSize();
 
