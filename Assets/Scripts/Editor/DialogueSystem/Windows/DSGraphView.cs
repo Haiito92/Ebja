@@ -11,12 +11,19 @@ public class DSGraphView : GraphView
     private DSEditorWindow _editorWindow;
     private DSSearchWindow _searchWindow;
 
+    private SerializableDictionary<string, DSNodeErrorData> _ungroupedNodes;
+
     public DSGraphView(DSEditorWindow dsEditorWindow) 
     {
         _editorWindow = dsEditorWindow;
+
+        _ungroupedNodes = new SerializableDictionary<string, DSNodeErrorData>();
+
         AddManipulators();
         AddSearchWindow();
         GenerateGridBackground();
+
+        OnElementsDeleted();
 
         AddStyles();
     }
@@ -95,10 +102,95 @@ public class DSGraphView : GraphView
 
         DSNode node = (DSNode) Activator.CreateInstance(nodeType);
 
-        node.Initialize(position);
+        node.Initialize(this, position);
         node.Draw();
 
+        AddUngroupedNode(node);
+
         return node;
+    }
+    #endregion
+
+    #region Callbacks
+
+    private void OnElementsDeleted()
+    {
+        deleteSelection = (operationName, askUser) =>
+        {
+            List<DSNode> nodesToDelete = new List<DSNode>();
+
+            foreach(GraphElement element in selection)
+            {
+                if (element is DSNode)
+                {
+                    nodesToDelete.Add((DSNode) element);
+
+                    continue;
+                }
+            }
+
+            foreach(DSNode node in nodesToDelete)
+            {
+                RemoveUngroupedNode(node);
+
+                RemoveElement(node);
+            }
+        };
+    }
+
+    #endregion
+
+    #region Repeated Elements
+    public void AddUngroupedNode(DSNode node)
+    {
+        string nodeName = node.DialogueName;
+
+        if(!_ungroupedNodes.ContainsKey(nodeName))
+        {
+            DSNodeErrorData nodeErrorData = new DSNodeErrorData();
+
+            nodeErrorData.Nodes.Add(node);
+
+            _ungroupedNodes.Add(nodeName, nodeErrorData);
+
+            return;
+        }
+
+        List<DSNode> ungroupedNodesList = _ungroupedNodes[nodeName].Nodes;
+
+        ungroupedNodesList.Add(node);
+
+        Color errorColor = _ungroupedNodes[nodeName].ErrorData.Color;
+
+        node.SetErrorStyle(errorColor);
+
+        if (ungroupedNodesList.Count == 2) 
+        {
+            ungroupedNodesList[0].SetErrorStyle(errorColor);
+        }
+    }
+    
+    public void RemoveUngroupedNode(DSNode node)
+    {
+        string nodeName = node.DialogueName;
+
+        List<DSNode> ungroupedNodesList = _ungroupedNodes[nodeName].Nodes;
+
+        ungroupedNodesList.Remove(node);
+
+        node.ResetStyle();
+
+        if (ungroupedNodesList.Count == 1 )
+        {
+            ungroupedNodesList[0].ResetStyle();
+
+            return;
+        }
+
+        if (ungroupedNodesList.Count == 0)
+        {
+            _ungroupedNodes.Remove(nodeName);
+        }
     }
     #endregion
 
