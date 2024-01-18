@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -12,18 +13,22 @@ public class DSGraphView : GraphView
     private DSSearchWindow _searchWindow;
 
     private SerializableDictionary<string, DSNodeErrorData> _ungroupedNodes;
+    private SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>> _groupedNodes;
 
     public DSGraphView(DSEditorWindow dsEditorWindow) 
     {
         _editorWindow = dsEditorWindow;
 
         _ungroupedNodes = new SerializableDictionary<string, DSNodeErrorData>();
+        _groupedNodes = new SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>>();
 
         AddManipulators();
         AddSearchWindow();
         GenerateGridBackground();
 
         OnElementsDeleted();
+        OnGroupElementsAdded();
+        OnGroupElementsRemoved();
 
         AddStyles();
     }
@@ -131,9 +136,51 @@ public class DSGraphView : GraphView
 
             foreach(DSNode node in nodesToDelete)
             {
+                if(node.Group != null)
+                {
+                    node.Group.RemoveElement(node);
+                }
+
                 RemoveUngroupedNode(node);
 
                 RemoveElement(node);
+            }
+        };
+    }
+
+    private void OnGroupElementsAdded()
+    {
+        elementsAddedToGroup = (group, elements) =>
+        {
+            foreach(GraphElement element in elements)
+            {
+                if(!(element is DSNode))
+                {
+                    continue;
+                }
+
+                DSNode node = (DSNode) element;
+
+                RemoveUngroupedNode(node);
+                AddGroupedNode(node, group);
+            }
+        };
+    }
+    private void OnGroupElementsRemoved()
+    {
+        elementsRemovedFromGroup = (group, elements) =>
+        {
+            foreach (GraphElement element in elements)
+            {
+                if (!(element is DSNode))
+                {
+                    continue;
+                }
+
+                DSNode node = (DSNode)element;
+
+                RemoveGroupedNode(node, group);
+                AddUngroupedNode(node);
             }
         };
     }
@@ -190,6 +237,70 @@ public class DSGraphView : GraphView
         if (ungroupedNodesList.Count == 0)
         {
             _ungroupedNodes.Remove(nodeName);
+        }
+    }
+
+    public void AddGroupedNode(DSNode node, Group group)
+    {
+        string nodeName = node.DialogueName;
+
+        node.Group = group;
+
+        if (!_groupedNodes.ContainsKey(group))
+        {
+            _groupedNodes.Add(group, new SerializableDictionary<string, DSNodeErrorData>());
+        }
+
+        if (!_groupedNodes[group].ContainsKey(nodeName))
+        {
+            DSNodeErrorData nodeErrorData = new DSNodeErrorData();
+
+            nodeErrorData.Nodes.Add(node);
+
+            _groupedNodes[group].Add(nodeName, nodeErrorData);
+
+            return;
+        }
+
+        List<DSNode> groupedNodesList = _groupedNodes[group][nodeName].Nodes;
+
+        groupedNodesList.Add(node);
+
+        Color errorColor = _groupedNodes[group][nodeName].ErrorData.Color;
+
+        node.SetErrorStyle(errorColor);
+
+        if (groupedNodesList.Count == 2)
+        {
+            groupedNodesList[0].SetErrorStyle(errorColor);
+        }
+    }
+
+    public void RemoveGroupedNode(DSNode node, Group group)
+    {
+        string nodeName = node.DialogueName;
+
+        node.Group = null;
+
+        List<DSNode> groupedNodesList = _groupedNodes[group][nodeName].Nodes;
+
+        groupedNodesList.Remove(node);
+
+        node.ResetStyle();
+
+        if(groupedNodesList.Count == 1)
+        {
+            groupedNodesList[0].ResetStyle();
+        }
+
+        if(groupedNodesList.Count == 0)
+        {
+            _groupedNodes[group].Remove(nodeName);
+
+            if (_groupedNodes[group].Count == 0)
+            {
+                _groupedNodes.Remove(group);
+            }
         }
     }
     #endregion
