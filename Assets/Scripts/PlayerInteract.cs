@@ -15,7 +15,6 @@ public class PlayerInteract : MonoBehaviour
     //References//
     [Header("References")]
     [Space]
-    PlayerMovement _playerMovement;
 
     //InputReferences//
     [Header("InputAction References")]
@@ -26,16 +25,9 @@ public class PlayerInteract : MonoBehaviour
 
     private void Awake()
     {
-        _playerMovement = GetComponent<PlayerMovement>();
-
         _interact.action.started += Interact;
     }
 
-    private void Start()
-    {
-        _playerMovement.OnStartWalking += StartCheckForInteractable;
-        _playerMovement.OnStopWalking += StopCheckForInteractable;
-    }
 
     #region CkeckForInteractableCoroutine;
     void StartCheckForInteractable()
@@ -110,10 +102,14 @@ public class PlayerInteract : MonoBehaviour
         if(interactable != null) interactable.Interact();
     }
 
+    private void OnEnable()
+    {
+        StartCheckForInteractable();
+    }
+
     private void OnDisable()
     {
-        _playerMovement.OnStartWalking -= StartCheckForInteractable;
-        _playerMovement.OnStopWalking -= StopCheckForInteractable;
+        StopCheckForInteractable();
     }
 
     private void OnDrawGizmos()
