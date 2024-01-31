@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -12,7 +14,11 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     //Walk
     [SerializeField] float _speed;
+    [SerializeField] float _accelerationTime;
+    [SerializeField] float _decelerationTime;
     bool _isFacingRight = true;
+    Vector2 HorizontalInput => _walk.action.ReadValue<Vector2>();
+    bool IsWalking => HorizontalInput.x != 0;
 
     [Header("Jump Fields")]
     [Space]
@@ -23,17 +29,16 @@ public class PlayerMovement : MonoBehaviour
     bool _isGrounded;
     [SerializeField] LayerMask _whatIsGround;
 
+    [Header("Components References")]
+    [Space]
     //References//
-    Rigidbody2D _rb;
+    [SerializeField] Rigidbody2D _rb;
 
     //InputReferences//
     [Header("InputAction References")]
     [Space]
     [SerializeField] InputActionReference _walk;
     [SerializeField] InputActionReference _jump;
-
-    //Coroutines//
-    Coroutine _walking;
 
     //Events//
     [Header("Events")]
@@ -42,61 +47,62 @@ public class PlayerMovement : MonoBehaviour
     public UnityEvent OnStopWalkingEvent;
 
     //Actions//
-    public Action OnStartWalking;
-    public Action OnStopWalking;
+    public event Action OnStartWalking;
+    public event Action OnStopWalking;
+
+    private void Reset()
+    {
+        _rb = GetComponent<Rigidbody2D>();
+    }
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody2D>();
-
-        _walk.action.started += StartWalking;
-        _walk.action.canceled += StopWalking;
-        _jump.action.started += Jump;
-
         OnStartWalkingEvent.AddListener(() => OnStartWalking?.Invoke());
     }
 
-    #region WalkingCoroutine
-    void StartWalking(InputAction.CallbackContext ctx)
+    private void FixedUpdate()
     {
-        if (_walking == null)
-        {
-            _walking = StartCoroutine(Walking());
-            OnStartWalkingEvent?.Invoke();
-        }
+        Walk();
+
+        FaceWalkingDirection();
     }
 
-    IEnumerator Walking()
+    void StartWalking(InputAction.CallbackContext ctx) => OnStartWalkingEvent?.Invoke();
+    void StopWalking(InputAction.CallbackContext ctx) => OnStopWalkingEvent?.Invoke();
+
+    void Walk()
     {
-        while (true)
+        if (IsWalking)
         {
-            Vector2 direction = _walk.action.ReadValue<Vector2>();
-            _rb.velocity = new Vector2(direction.x * _speed * Time.fixedDeltaTime, _rb.velocity.y);
+            float acceleration = (_speed / _accelerationTime) * Mathf.Sign(HorizontalInput.x);
 
-            if(_isFacingRight && direction.x < 0)
-            {
-                Flip();
-            }
-            else if(!_isFacingRight && direction.x > 0)
-            {
-                Flip();
-            }
+            Vector2 accelerationForce;
+            if ((HorizontalInput.x > 0 && _rb.velocity.x >= _speed) || (HorizontalInput.x < 0) && _rb.velocity.x <= -_speed) accelerationForce = Vector2.zero;
+            else accelerationForce = acceleration * Vector2.right;
 
-            yield return new WaitForFixedUpdate();
+            _rb.AddForce(accelerationForce);
+
+            return;
+        }
+
+        if (Mathf.Abs(_rb.velocity.x) < 0.03f) return;
+ 
+        float deceleration = (_speed / _decelerationTime) * Mathf.Sign(_rb.velocity.x) * -1;
+        Vector2 decelerationForce = deceleration * Vector2.right;
+        _rb.AddForce(decelerationForce);
+    }  
+
+    void FaceWalkingDirection()
+    {
+        if (_isFacingRight && HorizontalInput.x < 0)
+        {
+            Flip();
+        }
+        else if (!_isFacingRight && HorizontalInput.x > 0)
+        {
+            Flip();
         }
     }
-
-    void StopWalking(InputAction.CallbackContext ctx)
-    {
-        if(_walking != null)
-        {
-            StopCoroutine(_walking);
-            _walking = null;
-        }
-        _rb.velocity = new Vector2(0, _rb.velocity.y);
-        OnStopWalkingEvent?.Invoke();
-    }
-    #endregion
 
     void Flip()
     {
@@ -114,6 +120,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        _walk.action.started += StartWalking;
+        _walk.action.canceled += StopWalking;
+        _jump.action.started += Jump;
+    }
+
     private void OnDisable()
     {
         _walk.action.started -= StartWalking;
@@ -124,6 +137,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(_groundCheck.position, _groundCheckRadius);
+        if(_groundCheckRadius > 0) Gizmos.DrawWireSphere(_groundCheck.position, _groundCheckRadius);
     }
 }
