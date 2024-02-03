@@ -9,6 +9,9 @@ using System;
 
 public class DSEditorWindow : EditorWindow
 {
+    private readonly string _defaultFileName = "Dialogues File Name";
+    private Button _saveButton;
+
     [MenuItem("Tools/Dialogue Graph")]
     public static void OpenWindow()
     {
@@ -17,13 +20,14 @@ public class DSEditorWindow : EditorWindow
 
     private void CreateGUI()
     {
-        GenerateGraphView();
+        AddGraphView();
+        AddToolbar();
 
         AddStyles();
     }
 
     #region Elements Addition
-    private void GenerateGraphView()
+    private void AddGraphView()
     {
         DSGraphView graphView = new DSGraphView(this);
 
@@ -32,9 +36,37 @@ public class DSEditorWindow : EditorWindow
         rootVisualElement.Add(graphView);
     }
 
+    private void AddToolbar()
+    {
+        Toolbar toolbar = new Toolbar();
+
+        TextField fileNameTextField = DSElementUtility.CreateTextField(_defaultFileName, "File Name:");
+
+        _saveButton = DSElementUtility.CreateButton("Save");
+
+        toolbar.Add(fileNameTextField);
+        toolbar.Add(_saveButton);
+
+        toolbar.AddStyleSheets("Assets/Scripts/Editor/Resources/DialogueSystem/DSToolbarStyles.uss");
+
+        rootVisualElement.Add(toolbar);
+    }
+
     private void AddStyles()
     {
         rootVisualElement.AddStyleSheets("Assets/Scripts/Editor/Resources/DialogueSystem/DSVariables.uss");
+    }
+    #endregion
+
+    #region Utility Methods
+    public void EnableSaving()
+    {
+        _saveButton.SetEnabled(true);
+    }
+
+    public void DisableSaving()
+    {
+        _saveButton.SetEnabled(false);
     }
     #endregion
 }

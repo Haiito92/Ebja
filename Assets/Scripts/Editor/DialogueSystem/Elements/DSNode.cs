@@ -10,7 +10,7 @@ public class DSNode : Node
     public List<string> Choices { get; set; }
     public string Text { get; set; }
     public DSDialogueType DialogueType { get; set; }
-    public Group Group { get; set; }
+    public DSGroup Group { get; set; }
 
     private DSGraphView _graphView;
     private Color _defaultBackgroundColor;
@@ -34,7 +34,7 @@ public class DSNode : Node
     {
         /* TITLE CONTAINER */
 
-        TextField dialogueNameTextField = DSElementUtility.CreateTextField(DialogueName, callback =>
+        TextField dialogueNameTextField = DSElementUtility.CreateTextField(DialogueName, null, callback =>
         {
             if(Group == null)
             {
@@ -47,7 +47,7 @@ public class DSNode : Node
                 return;
             }
 
-            Group currentGroup = Group;
+            DSGroup currentGroup = Group;
 
             _graphView.RemoveGroupedNode(this, Group);
 
@@ -93,6 +93,46 @@ public class DSNode : Node
         extensionContainer.Add(customDataContainer);
     }
 
+    #region Overrided Methods
+    public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+    {
+        evt.menu.AppendAction("Disconnect Input Port", actionEvent => DisconnectInputPorts());
+        evt.menu.AppendAction("Disconnect Output Port", actionEvent => DisconnectOutputPorts());
+
+        base.BuildContextualMenu(evt);
+    }
+    #endregion
+
+    #region Utility Methods
+    public void DisconnectAllPorts()
+    {
+        DisconnectInputPorts();
+        DisconnectOutputPorts();
+    }
+
+    private void DisconnectInputPorts()
+    {
+        DisconnectPorts(inputContainer);
+    }
+
+    private void DisconnectOutputPorts()
+    {
+        DisconnectPorts(outputContainer);
+    }
+
+    private void DisconnectPorts(VisualElement container)
+    {
+        foreach(Port port in container.Children())
+        {
+            if(!port.connected)
+            {
+                continue;
+            }
+
+            _graphView.DeleteElements(port.connections);
+        }
+    }
+
     public void SetErrorStyle(Color color)
     {
         mainContainer.style.backgroundColor = color;
@@ -102,4 +142,5 @@ public class DSNode : Node
     {
         mainContainer.style.backgroundColor = _defaultBackgroundColor;
     }
+    #endregion
 }
