@@ -58,6 +58,7 @@ public class DSGraphView : GraphView
         OnGroupElementsAdded();
         OnGroupElementsRemoved();
         OnGroupRenamed();
+        OnGraphViewChanged();
 
         AddStyles();
     }
@@ -110,7 +111,7 @@ public class DSGraphView : GraphView
     private IManipulator CreateGroupContextualMenu(string actionTitle)
     {
         ContextualMenuManipulator contextualMenuManipulator = new ContextualMenuManipulator(
-            menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => CreateGroup("Dialogue Group", GetLocalMousePosition(actionEvent.eventInfo.localMousePosition)))
+            menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => CreateGroup("DialogueGroup", GetLocalMousePosition(actionEvent.eventInfo.localMousePosition)))
         );
 
         return contextualMenuManipulator;
@@ -284,11 +285,52 @@ public class DSGraphView : GraphView
         {
             DSGroup dSGroup = (DSGroup) group;
 
+            dSGroup.title = newTitle.RemoveWhitespaces().RemoveSpecialCharacters();
+
             RemoveGroup(dSGroup);
 
-            dSGroup.oldTitle = newTitle;
+            dSGroup.OldTitle = dSGroup.title;
 
             AddGroup(dSGroup);
+        };
+    }
+
+    private void OnGraphViewChanged()
+    {
+        graphViewChanged = (changes) =>
+        {
+            if(changes.edgesToCreate != null)
+            {
+                foreach (Edge edge in changes.edgesToCreate)
+                {
+                    DSNode nextNode = (DSNode) edge.input.node;
+
+                    DSChoiceSaveData choiceData = (DSChoiceSaveData) edge.output.userData;
+
+                    choiceData.NodeID = nextNode.ID;
+                }
+            }
+
+            if(changes.elementsToRemove != null)
+            {
+                Type edgeType = typeof(Edge);
+
+                foreach (GraphElement element in changes.elementsToRemove)
+                {
+                    if(element.GetType() != edgeType)
+                    {
+                        continue;
+                    }
+
+                    Edge edge = (Edge) element;
+
+                    DSChoiceSaveData choiceData = (DSChoiceSaveData) edge.output.userData;
+
+                    choiceData.NodeID = "";
+                }
+            }
+
+            return changes;
         };
     }
     #endregion
@@ -296,7 +338,7 @@ public class DSGraphView : GraphView
     #region Repeated Elements
     public void AddUngroupedNode(DSNode node)
     {
-        string nodeName = node.DialogueName;
+        string nodeName = node.DialogueName.ToLower();
 
         if(!_ungroupedNodes.ContainsKey(nodeName))
         {
@@ -327,7 +369,7 @@ public class DSGraphView : GraphView
     
     public void RemoveUngroupedNode(DSNode node)
     {
-        string nodeName = node.DialogueName;
+        string nodeName = node.DialogueName.ToLower();
 
         List<DSNode> ungroupedNodesList = _ungroupedNodes[nodeName].Nodes;
 
@@ -352,7 +394,7 @@ public class DSGraphView : GraphView
 
     public void AddGroup(DSGroup group)
     {
-        string groupName = group.title;
+        string groupName = group.title.ToLower();
 
         if (!_groups.ContainsKey(groupName))
         {
@@ -383,7 +425,7 @@ public class DSGraphView : GraphView
 
     private void RemoveGroup(DSGroup group)
     {
-        string oldGroupName = group.oldTitle;
+        string oldGroupName = group.OldTitle.ToLower();
 
         List<DSGroup> groupsList = _groups[oldGroupName].Groups;
 
@@ -408,7 +450,7 @@ public class DSGraphView : GraphView
 
     public void AddGroupedNode(DSNode node, DSGroup group)
     {
-        string nodeName = node.DialogueName;
+        string nodeName = node.DialogueName.ToLower();
 
         node.Group = group;
 
@@ -446,7 +488,7 @@ public class DSGraphView : GraphView
 
     public void RemoveGroupedNode(DSNode node, Group group)
     {
-        string nodeName = node.DialogueName;
+        string nodeName = node.DialogueName.ToLower();
 
         node.Group = null;
 
@@ -503,8 +545,8 @@ public class DSGraphView : GraphView
     private void AddStyles()
     {
         this.AddStyleSheets(
-            "Assets/Scripts/Editor/Resources/DialogueSystem/DSGraphViewStyles.uss",
-            "Assets/Scripts/Editor/Resources/DialogueSystem/DSNodeStyles.uss"
+            "DSGraphViewStyles",
+            "DSNodeStyles"
         );
     }
     #endregion

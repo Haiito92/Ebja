@@ -9,7 +9,8 @@ using System;
 
 public class DSEditorWindow : EditorWindow
 {
-    private readonly string _defaultFileName = "Dialogues File Name";
+    private readonly string _defaultFileName = "DialoguesFileName";
+    private TextField _fileNameTextField;
     private Button _saveButton;
 
     [MenuItem("Tools/Dialogue Graph")]
@@ -40,21 +41,24 @@ public class DSEditorWindow : EditorWindow
     {
         Toolbar toolbar = new Toolbar();
 
-        TextField fileNameTextField = DSElementUtility.CreateTextField(_defaultFileName, "File Name:");
+        _fileNameTextField = DSElementUtility.CreateTextField(_defaultFileName, "File Name:", callback =>
+        {
+            _fileNameTextField.value = callback.newValue.RemoveWhitespaces().RemoveSpecialCharacters();
+        });
 
         _saveButton = DSElementUtility.CreateButton("Save");
 
-        toolbar.Add(fileNameTextField);
+        toolbar.Add(_fileNameTextField);
         toolbar.Add(_saveButton);
 
-        toolbar.AddStyleSheets("Assets/Scripts/Editor/Resources/DialogueSystem/DSToolbarStyles.uss");
+        toolbar.AddStyleSheets("DSToolbarStyles");
 
         rootVisualElement.Add(toolbar);
     }
 
     private void AddStyles()
     {
-        rootVisualElement.AddStyleSheets("Assets/Scripts/Editor/Resources/DialogueSystem/DSVariables.uss");
+        rootVisualElement.AddStyleSheets("DSVariables");
     }
     #endregion
 

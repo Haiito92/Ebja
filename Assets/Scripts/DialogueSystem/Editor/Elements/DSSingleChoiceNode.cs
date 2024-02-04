@@ -12,7 +12,12 @@ public class DSSingleChoiceNode : DSNode
 
         DialogueType = DSDialogueType.SingleChoice;
 
-        Choices.Add("Next Dialogue");
+        DSChoiceSaveData choiceData = new DSChoiceSaveData()
+        {
+            Text = "Next Dialogue"
+        };
+
+        Choices.Add(choiceData);
     }
 
     public override void Draw()
@@ -21,9 +26,11 @@ public class DSSingleChoiceNode : DSNode
 
         /* OUTPUT CONTAINER */
 
-        foreach (string choice in Choices)
+        foreach (DSChoiceSaveData choice in Choices)
         {
-            Port choicePort = this.CreatePort(choice);
+            Port choicePort = this.CreatePort(choice.Text);
+
+            choicePort.userData = choice;
 
             outputContainer.Add(choicePort);
         }

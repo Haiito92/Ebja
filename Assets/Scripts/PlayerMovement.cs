@@ -58,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         OnStartWalkingEvent.AddListener(() => OnStartWalking?.Invoke());
+        OnStopWalkingEvent.AddListener(() => OnStopWalking?.Invoke());
     }
 
     private void FixedUpdate()

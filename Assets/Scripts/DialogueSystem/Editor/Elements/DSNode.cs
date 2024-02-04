@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -6,19 +7,21 @@ using UnityEngine.UIElements;
 
 public class DSNode : Node
 {
+    public string ID { get; set; }
     public string DialogueName { get; set; }
-    public List<string> Choices { get; set; }
+    public List<DSChoiceSaveData> Choices { get; set; }
     public string Text { get; set; }
     public DSDialogueType DialogueType { get; set; }
     public DSGroup Group { get; set; }
 
-    private DSGraphView _graphView;
+    protected DSGraphView _graphView;
     private Color _defaultBackgroundColor;
 
     public virtual void Initialize(DSGraphView dsGraphView, Vector2 position)
     {
+        ID = Guid.NewGuid().ToString();
         DialogueName = "DialogueName";
-        Choices = new List<string>();
+        Choices = new List<DSChoiceSaveData>();
         Text = "Dialogue text.";
 
         _graphView = dsGraphView;
@@ -36,11 +39,14 @@ public class DSNode : Node
 
         TextField dialogueNameTextField = DSElementUtility.CreateTextField(DialogueName, null, callback =>
         {
+            TextField target = (TextField) callback.target;
+            target.value = callback.newValue.RemoveWhitespaces().RemoveSpecialCharacters();
+
             if(Group == null)
             {
                 _graphView.RemoveUngroupedNode(this);
 
-                DialogueName = callback.newValue;
+                DialogueName = target.value;
 
                 _graphView.AddUngroupedNode(this);
 
@@ -51,7 +57,7 @@ public class DSNode : Node
 
             _graphView.RemoveGroupedNode(this, Group);
 
-            DialogueName = callback.newValue;
+            DialogueName = target.value;
 
             _graphView.AddGroupedNode(this, currentGroup);
 

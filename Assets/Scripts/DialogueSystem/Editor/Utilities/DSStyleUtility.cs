@@ -20,7 +20,7 @@ public static class DSStyleUtility
     {
         foreach(string styleSheetName in styleSheetNames)
         {
-            StyleSheet styleSheet = (StyleSheet)EditorGUIUtility.Load(styleSheetName);
+            StyleSheet styleSheet = (StyleSheet)Resources.Load(styleSheetName);
 
             element.styleSheets.Add(styleSheet);
         }
