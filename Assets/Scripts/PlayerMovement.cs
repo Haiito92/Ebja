@@ -70,8 +70,8 @@ public class PlayerMovement : MonoBehaviour
         FaceWalkingDirection();
     }
 
-    void StartWalking(InputAction.CallbackContext ctx) { OnStartWalkingEvent?.Invoke(); Debug.Log("Start"); }
-    void StopWalking(InputAction.CallbackContext ctx) { OnStopWalkingEvent?.Invoke(); Debug.Log("Stop"); }
+    void StartWalking(InputAction.CallbackContext ctx) => OnStartWalkingEvent?.Invoke();
+    void StopWalking(InputAction.CallbackContext ctx) => OnStopWalkingEvent?.Invoke();
 
     void Walk()
     {
