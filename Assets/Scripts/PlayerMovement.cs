@@ -16,9 +16,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _speed;
     [SerializeField] float _accelerationTime;
     [SerializeField] float _decelerationTime;
-    bool _isFacingRight = true;
-    Vector2 HorizontalInput => _walk.action.ReadValue<Vector2>();
-    bool IsWalking => HorizontalInput.x != 0;
+    bool _isFacingRight;
+    public Vector2 HorizontalInput => _walk.action.ReadValue<Vector2>();
+    public bool IsWalking => HorizontalInput.x != 0;
 
     [Header("Jump Fields")]
     [Space]
@@ -50,6 +50,8 @@ public class PlayerMovement : MonoBehaviour
     public event Action OnStartWalking;
     public event Action OnStopWalking;
 
+    public event Action<bool> OnFacingDirectionChanged;
+
     private void Reset()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -68,8 +70,8 @@ public class PlayerMovement : MonoBehaviour
         FaceWalkingDirection();
     }
 
-    void StartWalking(InputAction.CallbackContext ctx) => OnStartWalkingEvent?.Invoke();
-    void StopWalking(InputAction.CallbackContext ctx) => OnStopWalkingEvent?.Invoke();
+    void StartWalking(InputAction.CallbackContext ctx) { OnStartWalkingEvent?.Invoke(); Debug.Log("Start"); }
+    void StopWalking(InputAction.CallbackContext ctx) { OnStopWalkingEvent?.Invoke(); Debug.Log("Stop"); }
 
     void Walk()
     {
@@ -109,6 +111,7 @@ public class PlayerMovement : MonoBehaviour
     {
         transform.Rotate(new Vector3(0, 180 , 0));
         _isFacingRight = !_isFacingRight;
+        OnFacingDirectionChanged?.Invoke(_isFacingRight);
     }
 
     void Jump(InputAction.CallbackContext ctx)
