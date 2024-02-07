@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public static class DSIOUtility
     private static List<DSNode> _nodes;
 
     private static Dictionary<string, DSDialogueGroupSO> _createdDialogueGroups;
+    private static Dictionary<string, DSDialogueSO> _createdDialogues;
 
     public static void Initialize(DSGraphView dsGraphView, string graphName)
     {
@@ -27,6 +29,7 @@ public static class DSIOUtility
         _nodes = new List<DSNode>();
 
         _createdDialogueGroups = new Dictionary<string, DSDialogueGroupSO>();
+        _createdDialogues = new Dictionary<string, DSDialogueSO>();
     }
 
     #region Save Methods
@@ -54,11 +57,17 @@ public static class DSIOUtility
     #region Groups
     private static void SaveGroups(DSGraphSaveDataSO graphData, DSDialogueContainerSO dialogueContainer)
     {
+        List<string> groupNames = new List<string>();
+
         foreach(DSGroup group in _groups)
         {
             SaveGroupToGraph(group, graphData);
             SaveGroupToScriptableObject(group, dialogueContainer);
+
+            groupNames.Add(group.title);
         }
+
+        UpdateOldGroups(groupNames, graphData);
     }
 
     private static void SaveGroupToGraph(DSGroup group, DSGraphSaveDataSO graphData)
@@ -90,16 +99,48 @@ public static class DSIOUtility
 
         SaveAsset(dialogueGroup);
     }
+
+    private static void UpdateOldGroups(List<string> currentGroupNames, DSGraphSaveDataSO graphData)
+    {
+        if(graphData.OldGroupNames != null && graphData.OldGroupNames.Count != 0)
+        {
+            List<string> groupsToRemove = graphData.OldGroupNames.Except(currentGroupNames).ToList();
+
+            foreach(string groupToRemove in groupsToRemove)
+            {
+                RemoveFolder($"{_containerFolderPath}/Groups/{groupToRemove}");
+            }
+        }
+
+        graphData.OldGroupNames = new List<string>(currentGroupNames);
+    }
     #endregion
 
     #region Nodes
     private static void SaveNodes(DSGraphSaveDataSO graphData, DSDialogueContainerSO dialogueContainer)
     {
+        SerializableDictionary<string, List<string>> groupedNodeNames = new SerializableDictionary<string, List<string>>();
+        List<string> ungroupedNodeNames = new List<string>();
+
         foreach(DSNode node in _nodes)
         {
             SaveNodeToGraph(node, graphData);
             SaveNodeToScriptableObject(node, dialogueContainer);
+
+            if(node.Group != null)
+            {
+                groupedNodeNames.AddItem(node.Group.title, node.DialogueName);
+
+                continue;
+            }
+
+            ungroupedNodeNames.Add(node.DialogueName);
         }
+
+        UpdateDialoguesChoicesConnections();
+
+        UpdateOldGroupedNodes(groupedNodeNames, graphData);
+        UpdateOldUngroupedNodes(ungroupedNodeNames, graphData);
     }
 
     private static void SaveNodeToGraph(DSNode node, DSGraphSaveDataSO graphData)
@@ -138,7 +179,105 @@ public static class DSIOUtility
         if(node.Group != null)
         {
             dialogue = CreateAsset<DSDialogueSO>($"{_containerFolderPath}/Groups/{node.Group.title}/Dialogues", node.DialogueName);
+
+            dialogueContainer.DialogueGroups.AddItem(_createdDialogueGroups[node.Group.ID], dialogue);
         }
+        else
+        {
+            dialogue = CreateAsset<DSDialogueSO>($"{_containerFolderPath}/Global/Dialogues", node.DialogueName);
+
+            dialogueContainer.UngroupedDialogues.Add(dialogue);
+        }
+
+        dialogue.Initialize(
+            node.DialogueName,
+            node.Text,
+            ConvertNodeChoicesToDialogueChoices(node.Choices),
+            node.DialogueType,
+            node.IsStartingNode()
+        );
+
+        _createdDialogues.Add(node.ID, dialogue);
+
+        SaveAsset(dialogue);
+    }
+
+    private static List<DSDialogueChoiceData> ConvertNodeChoicesToDialogueChoices(List<DSChoiceSaveData> nodeChoices)
+    {
+        List<DSDialogueChoiceData> dialogueChoices = new List<DSDialogueChoiceData>();
+
+        foreach(DSChoiceSaveData nodeChoice in nodeChoices)
+        {
+            DSDialogueChoiceData choiceData = new DSDialogueChoiceData()
+            {
+                Text = nodeChoice.Text,
+            };
+
+            dialogueChoices.Add(choiceData);
+        }
+
+        return dialogueChoices;
+    }
+
+    private static void UpdateDialoguesChoicesConnections()
+    {
+        foreach(DSNode node in _nodes)
+        {
+            DSDialogueSO dialogue = _createdDialogues[node.ID];
+
+            for(int choiceIndex = 0; choiceIndex < node.Choices.Count; ++choiceIndex)
+            {
+                DSChoiceSaveData nodeChoice = node.Choices[choiceIndex];
+
+                if (string.IsNullOrEmpty(nodeChoice.NodeID))
+                {
+                    continue;
+                }
+
+                dialogue.Choices[choiceIndex].NextDialogue = _createdDialogues[nodeChoice.NodeID];
+
+                SaveAsset(dialogue);
+            } 
+
+        }
+    }
+
+    private static void UpdateOldGroupedNodes(SerializableDictionary<string, List<string>> currentGroupedNodeNames, DSGraphSaveDataSO graphData)
+    {
+        if(graphData.OldGroupedNodeNames != null && graphData.OldGroupedNodeNames.Count != 0)
+        {
+            foreach(KeyValuePair<string, List<string>> oldGroupedNode in graphData.OldGroupedNodeNames)
+            {
+                List<string> nodesToRemove = new List<string>();
+
+                if (currentGroupedNodeNames.ContainsKey(oldGroupedNode.Key))
+                {
+                    nodesToRemove = oldGroupedNode.Value.Except(currentGroupedNodeNames[oldGroupedNode.Key]).ToList();
+                }
+
+                foreach (string nodeToRemove in nodesToRemove)
+                {
+                    RemoveAsset($"{_containerFolderPath}/Groups/{oldGroupedNode.Key}/Dialogues", nodeToRemove);
+                }
+            }
+        }
+
+        graphData.OldGroupedNodeNames = new SerializableDictionary<string, List<string>>(currentGroupedNodeNames);
+    }
+
+    private static void UpdateOldUngroupedNodes(List<string> currentUngroupedNodeNames, DSGraphSaveDataSO graphData)
+    {
+        if(graphData.OldUngroupedNodeNames != null && graphData.OldUngroupedNodeNames.Count != 0)
+        {
+            List<string> nodesToRemove = graphData.OldUngroupedNodeNames.Except(currentUngroupedNodeNames).ToList();
+
+            foreach(string nodeToRemove in nodesToRemove)
+            {
+                RemoveAsset($"{_containerFolderPath}/Global/Dialogues", nodeToRemove);
+            }
+        }
+
+        graphData.OldUngroupedNodeNames = new List<string>(currentUngroupedNodeNames);
     }
     #endregion
 
@@ -197,6 +336,12 @@ public static class DSIOUtility
         AssetDatabase.CreateFolder(path, fileName);
     }
 
+    private static void RemoveFolder(string fullPath)
+    {
+        FileUtil.DeleteFileOrDirectory($"{fullPath}.meta");
+        FileUtil.DeleteFileOrDirectory($"{fullPath}/");
+    }
+
     private static T CreateAsset<T>(string path, string assetName) where T : ScriptableObject
     {
         string fullPath = $"{path}/{assetName}.asset";
@@ -211,6 +356,11 @@ public static class DSIOUtility
         }
 
         return asset;
+    }
+
+    private static void RemoveAsset(string path, string assetName)
+    {
+        AssetDatabase.DeleteAsset($"{path}/{assetName}.asset");
     }
 
     private static void SaveAsset(UnityEngine.Object asset)

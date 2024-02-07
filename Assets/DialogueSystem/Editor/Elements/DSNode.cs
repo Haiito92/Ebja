@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -41,6 +42,21 @@ public class DSNode : Node
         {
             TextField target = (TextField) callback.target;
             target.value = callback.newValue.RemoveWhitespaces().RemoveSpecialCharacters();
+
+            if(string.IsNullOrEmpty(target.value))
+            {
+                if (!string.IsNullOrEmpty(DialogueName))
+                {
+                    ++_graphView.NameErrorsAmount;
+                };
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(DialogueName))
+                {
+                    --_graphView.NameErrorsAmount;
+                };
+            }
 
             if(Group == null)
             {
@@ -140,6 +156,13 @@ public class DSNode : Node
 
             _graphView.DeleteElements(port.connections);
         }
+    }
+
+    public bool IsStartingNode()
+    {
+        Port inputPort = (Port) inputContainer.Children().First();
+
+        return !inputPort.connected;
     }
 
     public void SetErrorStyle(Color color)

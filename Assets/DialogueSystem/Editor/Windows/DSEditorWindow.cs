@@ -9,7 +9,10 @@ using System;
 
 public class DSEditorWindow : EditorWindow
 {
+    private DSGraphView _graphView;
+
     private readonly string _defaultFileName = "DialoguesFileName";
+
     private TextField _fileNameTextField;
     private Button _saveButton;
 
@@ -30,11 +33,11 @@ public class DSEditorWindow : EditorWindow
     #region Elements Addition
     private void AddGraphView()
     {
-        DSGraphView graphView = new DSGraphView(this);
+        _graphView = new DSGraphView(this);
 
-        graphView.StretchToParentSize();
+        _graphView.StretchToParentSize();
 
-        rootVisualElement.Add(graphView);
+        rootVisualElement.Add(_graphView);
     }
 
     private void AddToolbar()
@@ -46,7 +49,7 @@ public class DSEditorWindow : EditorWindow
             _fileNameTextField.value = callback.newValue.RemoveWhitespaces().RemoveSpecialCharacters();
         });
 
-        _saveButton = DSElementUtility.CreateButton("Save");
+        _saveButton = DSElementUtility.CreateButton("Save", () => Save());
 
         toolbar.Add(_fileNameTextField);
         toolbar.Add(_saveButton);
@@ -59,6 +62,25 @@ public class DSEditorWindow : EditorWindow
     private void AddStyles()
     {
         rootVisualElement.AddStyleSheets("DSVariables");
+    }
+    #endregion
+
+    #region Toolbar Actions
+    private void Save()
+    {
+        if(string.IsNullOrEmpty(_fileNameTextField.value))
+        {
+            EditorUtility.DisplayDialog(
+                "Invalid file name",
+                "Please ensure the file name you've typed in is valid",
+                "Roger!"
+            );
+
+            return;
+        }
+
+        DSIOUtility.Initialize(_graphView, _fileNameTextField.value);
+        DSIOUtility.Save();
     }
     #endregion
 

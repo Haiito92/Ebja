@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public class DSGraphView : GraphView
 {
@@ -17,25 +18,25 @@ public class DSGraphView : GraphView
     private SerializableDictionary<string, DSGroupErrorData> _groups;
     private SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>> _groupedNodes;
 
-    private int _repeatedNamesAmount;
+    private int _nameErrorsAmount;
 
-    public int RepeatedNamesAmount
+    public int NameErrorsAmount
     {
         get 
         { 
-            return _repeatedNamesAmount; 
+            return _nameErrorsAmount; 
         } 
 
         set
         {
-            _repeatedNamesAmount = value;
+            _nameErrorsAmount = value;
 
-            if(_repeatedNamesAmount == 0)
+            if(_nameErrorsAmount == 0)
             {
                 _editorWindow.EnableSaving();
             }
 
-            if(_repeatedNamesAmount == 1)
+            if(_nameErrorsAmount == 1)
             {
                 _editorWindow.DisableSaving();
             }
@@ -287,6 +288,21 @@ public class DSGraphView : GraphView
 
             dSGroup.title = newTitle.RemoveWhitespaces().RemoveSpecialCharacters();
 
+            if (string.IsNullOrEmpty(dSGroup.title))
+            {
+                if (!string.IsNullOrEmpty(dSGroup.OldTitle))
+                {
+                    ++NameErrorsAmount;
+                };
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(dSGroup.OldTitle))
+                {
+                    --NameErrorsAmount;
+                };
+            }
+
             RemoveGroup(dSGroup);
 
             dSGroup.OldTitle = dSGroup.title;
@@ -361,7 +377,7 @@ public class DSGraphView : GraphView
 
         if (ungroupedNodesList.Count == 2) 
         {
-            ++RepeatedNamesAmount;
+            ++NameErrorsAmount;
 
             ungroupedNodesList[0].SetErrorStyle(errorColor);
         }
@@ -379,7 +395,7 @@ public class DSGraphView : GraphView
 
         if (ungroupedNodesList.Count == 1 )
         {
-            --RepeatedNamesAmount;
+            --NameErrorsAmount;
 
             ungroupedNodesList[0].ResetStyle();
 
@@ -417,7 +433,7 @@ public class DSGraphView : GraphView
 
         if(groupsList.Count == 2)
         {
-            ++RepeatedNamesAmount;
+            ++NameErrorsAmount;
 
             groupsList[0].SetErrorStyle(errorColor);
         }
@@ -435,7 +451,7 @@ public class DSGraphView : GraphView
 
         if(groupsList.Count == 1)
         {
-            --RepeatedNamesAmount;
+            --NameErrorsAmount;
 
             groupsList[0].ResetStyle();
 
@@ -480,7 +496,7 @@ public class DSGraphView : GraphView
 
         if (groupedNodesList.Count == 2)
         {
-            ++RepeatedNamesAmount;
+            ++NameErrorsAmount;
 
             groupedNodesList[0].SetErrorStyle(errorColor);
         }
@@ -500,7 +516,7 @@ public class DSGraphView : GraphView
 
         if(groupedNodesList.Count == 1)
         {
-            --RepeatedNamesAmount;
+            --NameErrorsAmount;
 
             groupedNodesList[0].ResetStyle();
 
