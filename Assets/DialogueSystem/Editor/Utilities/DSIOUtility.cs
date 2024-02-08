@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public static class DSIOUtility
@@ -18,6 +19,9 @@ public static class DSIOUtility
     private static Dictionary<string, DSDialogueGroupSO> _createdDialogueGroups;
     private static Dictionary<string, DSDialogueSO> _createdDialogues;
 
+    private static Dictionary<string, DSGroup> _loadedGroups;
+    private static Dictionary<string, DSNode> _loadedNodes;
+
     public static void Initialize(DSGraphView dsGraphView, string graphName)
     {
         _graphView = dsGraphView;
@@ -30,6 +34,9 @@ public static class DSIOUtility
 
         _createdDialogueGroups = new Dictionary<string, DSDialogueGroupSO>();
         _createdDialogues = new Dictionary<string, DSDialogueSO>();
+
+        _loadedGroups = new Dictionary<string, DSGroup>();
+        _loadedNodes = new Dictionary<string, DSNode>();
     }
 
     #region Save Methods
@@ -145,18 +152,7 @@ public static class DSIOUtility
 
     private static void SaveNodeToGraph(DSNode node, DSGraphSaveDataSO graphData)
     {
-        List<DSChoiceSaveData> choices = new List<DSChoiceSaveData>();
-
-        foreach(DSChoiceSaveData choice in node.Choices)
-        {
-            DSChoiceSaveData choiceData = new DSChoiceSaveData()
-            {
-                Text = choice.Text,
-                NodeID = choice.NodeID,
-            };
-
-            choices.Add(choiceData);
-        }
+        List<DSChoiceSaveData> choices = CloneNodeChoices(node.Choices);
 
         DSNodeSaveData nodeData = new DSNodeSaveData()
         {
@@ -283,6 +279,103 @@ public static class DSIOUtility
 
     #endregion
 
+    #region Load Methods
+
+    public static void Load()
+    {
+        DSGraphSaveDataSO graphData = LoadAsset<DSGraphSaveDataSO>("Assets/DialogueSystem/Editor/Graphs", _graphFileName);
+
+        if (graphData == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Couldn't load the file",
+                "The file at the following path could not be found:\n\n" +
+                $"Assets/DialogueSystem/Editor/Graph/{_graphFileName}\n\n" + 
+                "Make sure you chose the right file and it's placed at the folder path mentioned above.",
+                "Thanks!"
+            );
+
+            return;
+        }
+
+        DSEditorWindow.UpdateFileName(graphData.FileName);
+
+        LoadGroups(graphData.Groups);
+        LoadNodes(graphData.Nodes);
+        LoadNodesConnections();
+    }
+
+    private static void LoadGroups(List<DSGroupSaveData> groups)
+    {
+        foreach(DSGroupSaveData groupData in groups)
+        {
+            DSGroup group = _graphView.CreateGroup(groupData.Name, groupData.Position);
+
+            group.ID = groupData.ID;
+
+            _loadedGroups.Add(group.ID, group);
+        }
+    }
+
+    private static void LoadNodes(List<DSNodeSaveData> nodes)
+    {
+        foreach (DSNodeSaveData nodeData in nodes)
+        {
+            List<DSChoiceSaveData> choices = CloneNodeChoices(nodeData.Choices);
+
+            DSNode node = _graphView.CreateNode(nodeData.Name, nodeData.DialogueType, nodeData.Position, false);
+
+            node.ID = nodeData.ID;
+            node.Choices = choices;
+            node.Text = nodeData.Text;
+
+            node.Draw();
+
+            _graphView.AddElement(node);
+
+            _loadedNodes.Add(node.ID, node);
+
+            if (string.IsNullOrEmpty(nodeData.GroupID))
+            {
+                continue;
+            }
+
+            DSGroup group = _loadedGroups[nodeData.GroupID];
+
+            node.Group = group;
+
+            group.AddElement(node);
+        }
+    }
+
+    private static void LoadNodesConnections()
+    {
+        foreach(KeyValuePair<string, DSNode> loadedNode in _loadedNodes)
+        {
+            foreach(Port choicePort in loadedNode.Value.outputContainer.Children()) 
+            {
+                DSChoiceSaveData choiceData = (DSChoiceSaveData) choicePort.userData;
+
+                if(string.IsNullOrEmpty(choiceData.NodeID))
+                {
+                    continue;
+                }
+
+                DSNode nextNode = _loadedNodes[choiceData.NodeID];
+
+                Port nextNodeInputPort = (Port) nextNode.inputContainer.Children().First();
+
+                Edge edge = choicePort.ConnectTo(nextNodeInputPort);
+
+                _graphView.AddElement(edge);
+
+                loadedNode.Value.RefreshPorts();
+            }
+        }
+    }
+
+    #endregion
+
     #region Creation Methods
     private static void CreateStaticFolders()
     {
@@ -345,10 +438,9 @@ public static class DSIOUtility
     private static T CreateAsset<T>(string path, string assetName) where T : ScriptableObject
     {
         string fullPath = $"{path}/{assetName}.asset";
+        T asset = LoadAsset<T>(path, assetName);
 
-        T asset = AssetDatabase.LoadAssetAtPath<T>(fullPath);
-
-        if(asset == null)
+        if (asset == null)
         {
             asset = ScriptableObject.CreateInstance<T>();
 
@@ -356,6 +448,13 @@ public static class DSIOUtility
         }
 
         return asset;
+    }
+
+    private static T LoadAsset<T>(string path, string assetName) where T : ScriptableObject
+    {
+        string fullPath = $"{path}/{assetName}.asset";
+
+        return AssetDatabase.LoadAssetAtPath<T>(fullPath);
     }
 
     private static void RemoveAsset(string path, string assetName)
@@ -369,6 +468,24 @@ public static class DSIOUtility
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+    }
+
+    private static List<DSChoiceSaveData> CloneNodeChoices(List<DSChoiceSaveData> nodeChoices)
+    {
+        List<DSChoiceSaveData> choices = new List<DSChoiceSaveData>();
+
+        foreach (DSChoiceSaveData choice in nodeChoices)
+        {
+            DSChoiceSaveData choiceData = new DSChoiceSaveData()
+            {
+                Text = choice.Text,
+                NodeID = choice.NodeID,
+            };
+
+            choices.Add(choiceData);
+        }
+
+        return choices;
     }
     #endregion
 }

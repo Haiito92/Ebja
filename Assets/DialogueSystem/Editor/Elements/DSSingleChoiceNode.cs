@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class DSSingleChoiceNode : DSNode
 {
-    public override void Initialize(DSGraphView dsGraphView, Vector2 position)
+    public override void Initialize(string nodeName, DSGraphView dsGraphView, Vector2 position)
     {
-        base.Initialize(dsGraphView, position);
+        base.Initialize(nodeName, dsGraphView, position);
 
         DialogueType = DSDialogueType.SingleChoice;
 

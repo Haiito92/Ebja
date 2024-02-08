@@ -53,7 +53,7 @@ public class DSSearchWindow : ScriptableObject, ISearchWindowProvider
         {
             case DSDialogueType.SingleChoice:
                 {
-                    DSSingleChoiceNode singleChoiceNode = (DSSingleChoiceNode)_graphView.CreateNode(DSDialogueType.SingleChoice, localMousePosition);
+                    DSSingleChoiceNode singleChoiceNode = (DSSingleChoiceNode)_graphView.CreateNode("DialogueName", DSDialogueType.SingleChoice, localMousePosition);
 
                     _graphView.AddElement(singleChoiceNode);
 
@@ -62,7 +62,7 @@ public class DSSearchWindow : ScriptableObject, ISearchWindowProvider
 
             case DSDialogueType.MultipleChoice:
                 {
-                    DSMultipleChoiceNode multipleChoiceNode = (DSMultipleChoiceNode)_graphView.CreateNode(DSDialogueType.MultipleChoice, localMousePosition);
+                    DSMultipleChoiceNode multipleChoiceNode = (DSMultipleChoiceNode)_graphView.CreateNode("DialogueName", DSDialogueType.MultipleChoice, localMousePosition);
 
                     _graphView.AddElement(multipleChoiceNode);
 
