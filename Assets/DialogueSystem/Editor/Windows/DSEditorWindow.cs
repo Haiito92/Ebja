@@ -16,6 +16,7 @@ public class DSEditorWindow : EditorWindow
 
     private static TextField _fileNameTextField;
     private Button _saveButton;
+    private Button _miniMapButton;
 
     [MenuItem("Tools/Dialogue Graph")]
     public static void OpenWindow()
@@ -56,11 +57,14 @@ public class DSEditorWindow : EditorWindow
         Button clearButton = DSElementUtility.CreateButton("Clear", () => Clear());
         Button resetButton = DSElementUtility.CreateButton("Reset", () => ResetGraph());
 
+        _miniMapButton = DSElementUtility.CreateButton("MiniMap", () => ToggleMiniMap());
+
         toolbar.Add(_fileNameTextField);
         toolbar.Add(_saveButton);
         toolbar.Add(loadButton);
         toolbar.Add(clearButton);
         toolbar.Add(resetButton);
+        toolbar.Add(_miniMapButton);
 
         toolbar.AddStyleSheets("DSToolbarStyles");
 
@@ -116,6 +120,13 @@ public class DSEditorWindow : EditorWindow
         Clear();
 
         UpdateFileName(_defaultFileName);
+    }
+
+    private void ToggleMiniMap()
+    {
+        _graphView.ToggleMiniMap();
+
+        _miniMapButton.ToggleInClassList("ds-toolbar__button__selected");
     }
     #endregion
 

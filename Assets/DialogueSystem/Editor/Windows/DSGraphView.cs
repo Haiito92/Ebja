@@ -14,6 +14,8 @@ public class DSGraphView : GraphView
     private DSEditorWindow _editorWindow;
     private DSSearchWindow _searchWindow;
 
+    private MiniMap _miniMap;
+
     private SerializableDictionary<string, DSNodeErrorData> _ungroupedNodes;
     private SerializableDictionary<string, DSGroupErrorData> _groups;
     private SerializableDictionary<Group, SerializableDictionary<string, DSNodeErrorData>> _groupedNodes;
@@ -53,6 +55,7 @@ public class DSGraphView : GraphView
 
         AddManipulators();
         AddSearchWindow();
+        AddMiniMap();
         GenerateGridBackground();
 
         OnElementsDeleted();
@@ -62,6 +65,7 @@ public class DSGraphView : GraphView
         OnGraphViewChanged();
 
         AddStyles();
+        AddMiniMapStyles();
     }
 
     #region Overrided Methods
@@ -553,6 +557,20 @@ public class DSGraphView : GraphView
         nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
     }
 
+    private void AddMiniMap()
+    {
+        _miniMap = new MiniMap() 
+        {
+            anchored = true,
+        };
+
+        _miniMap.SetPosition(new Rect(15, 50, 200, 180));
+
+        Add(_miniMap);
+
+        _miniMap.visible = false;
+    }
+
     private void GenerateGridBackground()
     {
         GridBackground gridBackground = new GridBackground();
@@ -568,6 +586,18 @@ public class DSGraphView : GraphView
             "DSGraphViewStyles",
             "DSNodeStyles"
         );
+    }
+
+    private void AddMiniMapStyles()
+    {
+        StyleColor backgroundColor = new StyleColor(new Color32(29, 29, 30, 255));
+        StyleColor borderColor = new StyleColor(new Color32(51, 51, 51, 255));
+
+        _miniMap.style.backgroundColor = backgroundColor;
+        _miniMap.style.borderTopColor = borderColor;
+        _miniMap.style.borderRightColor = borderColor;
+        _miniMap.style.borderBottomColor = borderColor;
+        _miniMap.style.borderLeftColor = borderColor;
     }
     #endregion
 
@@ -596,6 +626,11 @@ public class DSGraphView : GraphView
         _ungroupedNodes.Clear();
 
         NameErrorsAmount = 0;
+    }
+
+    public void ToggleMiniMap()
+    {
+        _miniMap.visible = !_miniMap.visible;
     }
     #endregion
 }
