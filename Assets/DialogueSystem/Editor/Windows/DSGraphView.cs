@@ -583,5 +583,15 @@ public class DSGraphView : GraphView
         return localMousePosition;
     }
 
+    public void ClearGraph()
+    {
+        graphElements.ForEach( graphElement => RemoveElement(graphElement));
+
+        _groups.Clear();
+        _groupedNodes.Clear();
+        _ungroupedNodes.Clear();
+
+        NameErrorsAmount = 0;
+    }
     #endregion
 }
