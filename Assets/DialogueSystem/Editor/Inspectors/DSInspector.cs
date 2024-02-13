@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 
 [CustomEditor(typeof(DSDialogue))]
@@ -38,9 +39,30 @@ public class DSInspector : Editor
 
         DrawDialogueContainerArea();
 
+        DSDialogueContainerSO dialogueContainer = (DSDialogueContainerSO) _dialogueContainerProperty.objectReferenceValue;
+
+        if(dialogueContainer == null )
+        {
+            StopDrawing("Select a Dialogue Container to see the rest of the Inspector.");
+
+            return;
+        }
+
         DrawFiltersArea();
 
-        DrawDialogueGroupArea();
+        if(_groupedDialoguesProperty.boolValue)
+        {
+            List<string> dialogueGroupNames = dialogueContainer.GetDialogueGroupNames();
+
+            if(dialogueGroupNames.Count == 0 )
+            {
+                StopDrawing("There are no Dialogue Groups in this Dialogue Container.");
+
+                return;
+            }
+
+            DrawDialogueGroupArea(dialogueContainer, dialogueGroupNames);
+        }
 
         DrawDialogueArea();
 
@@ -50,41 +72,92 @@ public class DSInspector : Editor
     #region Draw Methods
     private void DrawDialogueContainerArea()
     {
-        EditorGUILayout.LabelField("Dialogue Container", EditorStyles.boldLabel);
+        DSInspectorUtility.DrawHeader("Dialogue Container");
 
-        EditorGUILayout.PropertyField(_dialogueContainerProperty);
+        _dialogueContainerProperty.DrawPropertyField();
 
-        EditorGUILayout.Space(4);
+        DSInspectorUtility.DrawSpace();
     }
 
     private void DrawFiltersArea()
     {
-        EditorGUILayout.LabelField("Filters", EditorStyles.boldLabel);
+        DSInspectorUtility.DrawHeader("Filters");
 
-        EditorGUILayout.PropertyField(_groupedDialoguesProperty);
-        EditorGUILayout.PropertyField(_startingDialoguesOnlyProperty);
+        _groupedDialoguesProperty.DrawPropertyField();
+        _startingDialoguesOnlyProperty.DrawPropertyField();
 
-        EditorGUILayout.Space(4);
+        DSInspectorUtility.DrawSpace();
     }
 
-    private void DrawDialogueGroupArea()
+    private void DrawDialogueGroupArea(DSDialogueContainerSO dialogueContainer, List<string> dialogueGroupNames)
     {
-        EditorGUILayout.LabelField("Dialogue Group", EditorStyles.boldLabel);
+        DSInspectorUtility.DrawHeader("Dialogue Group");
 
-        _selectedDialogueGroupIndexProperty.intValue = EditorGUILayout.Popup("Dialogue Group", _selectedDialogueGroupIndexProperty.intValue, new string[] { });
+        int oldSelectedDialogueGroupIndex = _selectedDialogueGroupIndexProperty.intValue;
 
-        EditorGUILayout.PropertyField(_dialogueGroupProperty);
+        DSDialogueGroupSO oldDialogueGroup = (DSDialogueGroupSO)_dialogueGroupProperty.objectReferenceValue;
 
-        EditorGUILayout.Space(4);
+        bool isOldDialogueGroupNull = oldDialogueGroup == null;
+
+        string oldDialogueGroupName = isOldDialogueGroupNull ? "" : oldDialogueGroup.GroupName;
+
+        UpdateIndexOnNamesListUpdate(dialogueGroupNames, _selectedDialogueGroupIndexProperty, oldSelectedDialogueGroupIndex, oldDialogueGroupName, isOldDialogueGroupNull);
+
+        _selectedDialogueGroupIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue Group", _selectedDialogueGroupIndexProperty, dialogueGroupNames.ToArray());
+
+        string selectedDialogueGroupName = dialogueGroupNames[_selectedDialogueGroupIndexProperty.intValue];
+
+        DSDialogueGroupSO selectedDialogueGroup = DSIOUtility.LoadAsset<DSDialogueGroupSO>($"Assets/DialogueSystem/Runtime/Dialogues/{dialogueContainer.FileName}/Groups/{selectedDialogueGroupName}", selectedDialogueGroupName);
+
+        _dialogueGroupProperty.objectReferenceValue = selectedDialogueGroup;
+
+        _dialogueGroupProperty.DrawPropertyField();
+
+        DSInspectorUtility.DrawSpace();
     }
 
     private void DrawDialogueArea()
     {
-        EditorGUILayout.LabelField("Dialogue", EditorStyles.boldLabel);
+        DSInspectorUtility.DrawHeader("Dialogue");
 
-        _selectedDialogueIndexProperty.intValue = EditorGUILayout.Popup("Dialogue", _selectedDialogueIndexProperty.intValue, new string[] { });
+        _selectedDialogueIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue", _selectedDialogueIndexProperty, new string[] { });
 
-        EditorGUILayout.PropertyField(_dialogueProperty);
+        _dialogueProperty.DrawPropertyField();
+    }
+
+    private void StopDrawing(string reason)
+    {
+        DSInspectorUtility.DrawHelpBox(reason);
+
+        serializedObject.ApplyModifiedProperties();
+    }
+    #endregion
+
+    #region Index Methods
+    private void UpdateIndexOnNamesListUpdate(List<string> optionNames, SerializedProperty indexProperty, int oldSelectedPropertyIndex, string oldPropertyName, bool isOldPropertyNull)
+    {
+        if (isOldPropertyNull)
+        {
+            indexProperty.intValue = 0;
+
+            return;
+        }
+
+        bool oldIndexIsOutOfBoundsOfNamesLiastCount = oldSelectedPropertyIndex > optionNames.Count - 1;
+        bool oldNameIsDifferentThanSelectedName = oldIndexIsOutOfBoundsOfNamesLiastCount || oldPropertyName != optionNames[oldSelectedPropertyIndex];
+
+        if (oldNameIsDifferentThanSelectedName)
+        {
+            if (optionNames.Contains(oldPropertyName))
+            {
+                indexProperty.intValue = optionNames.IndexOf(oldPropertyName);
+            }
+            else
+            {
+                indexProperty.intValue = 0;
+            }
+        }
+
     }
     #endregion
 }

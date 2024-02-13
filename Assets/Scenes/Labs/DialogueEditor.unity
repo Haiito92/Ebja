@@ -164,10 +164,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 376085122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f50429ce91ab49e4e95925ea26e0294e, type: 3}
+  m_Script: {fileID: 11500000, guid: b8bef91a02f437e43a8a950b86e2add2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _text: This a simple text for a simple dialogue !
+  _dialogueContainer: {fileID: 11400000, guid: fec45bd45b87d944e9e6ba61fb7e844d, type: 2}
+  _dialogueGroup: {fileID: 11400000, guid: effba9c6aa69b364f94296cf5eab3df8, type: 2}
+  _dialogue: {fileID: 0}
+  _groupedDialogues: 1
+  _startingDialoguesOnly: 0
+  _selectedDialogueGroupIndex: 1
+  _selectedDialogueIndex: 0
 --- !u!1 &1681436518
 GameObject:
   m_ObjectHideFlags: 0

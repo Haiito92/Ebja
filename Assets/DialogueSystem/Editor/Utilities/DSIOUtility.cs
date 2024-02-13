@@ -419,7 +419,7 @@ public static class DSIOUtility
     #endregion
 
     #region Utility Methods
-    private static void CreateFolder(string path, string fileName)
+    public static void CreateFolder(string path, string fileName)
     {
         if (AssetDatabase.IsValidFolder($"{path}/{fileName}"))
         {
@@ -429,13 +429,13 @@ public static class DSIOUtility
         AssetDatabase.CreateFolder(path, fileName);
     }
 
-    private static void RemoveFolder(string fullPath)
+    public static void RemoveFolder(string fullPath)
     {
         FileUtil.DeleteFileOrDirectory($"{fullPath}.meta");
         FileUtil.DeleteFileOrDirectory($"{fullPath}/");
     }
 
-    private static T CreateAsset<T>(string path, string assetName) where T : ScriptableObject
+    public static T CreateAsset<T>(string path, string assetName) where T : ScriptableObject
     {
         string fullPath = $"{path}/{assetName}.asset";
         T asset = LoadAsset<T>(path, assetName);
@@ -450,19 +450,19 @@ public static class DSIOUtility
         return asset;
     }
 
-    private static T LoadAsset<T>(string path, string assetName) where T : ScriptableObject
+    public static T LoadAsset<T>(string path, string assetName) where T : ScriptableObject
     {
         string fullPath = $"{path}/{assetName}.asset";
 
         return AssetDatabase.LoadAssetAtPath<T>(fullPath);
     }
 
-    private static void RemoveAsset(string path, string assetName)
+    public static void RemoveAsset(string path, string assetName)
     {
         AssetDatabase.DeleteAsset($"{path}/{assetName}.asset");
     }
 
-    private static void SaveAsset(UnityEngine.Object asset)
+    public static void SaveAsset(UnityEngine.Object asset)
     {
         EditorUtility.SetDirty(asset);
 
