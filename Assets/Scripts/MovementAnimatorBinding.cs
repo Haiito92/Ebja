@@ -1,9 +1,17 @@
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MovementAnimatorBinding : MonoBehaviour
 {
+    //Animator Params
+    [SerializeField, AnimatorParam(nameof(_anim), AnimatorControllerParameterType.Bool)] string _isWalkingParam;
+    [SerializeField, AnimatorParam(nameof(_anim), AnimatorControllerParameterType.Float)] string _isFacingRightParam;
+
+    [SerializeField, AnimatorParam(nameof(_anim), AnimatorControllerParameterType.Bool)] string _isGroudedParam;
+    [SerializeField, AnimatorParam(nameof(_anim), AnimatorControllerParameterType.Bool)] string _isJumpingParam;
+    [SerializeField, AnimatorParam(nameof(_anim), AnimatorControllerParameterType.Float)] string _verticalSpeedParam;
 
     //Refs to components
     [Header("Refs to components")]
@@ -17,13 +25,24 @@ public class MovementAnimatorBinding : MonoBehaviour
         _anim = GetComponent<Animator>();
     }
 
-    void SetIsWalkingParam() => _anim.SetBool("IsWalking", _playerMovement.IsWalking);
+    private void Update()
+    {
+        _anim.SetBool(_isGroudedParam, _playerMovement.IsGrounded);
+        if (!_playerMovement.IsGrounded)
+        {
+            _anim.SetFloat(_verticalSpeedParam, _playerMovement.VerticalSpeed);
+        }
+    }
+
+    void SetIsWalkingParam() => _anim.SetBool(_isWalkingParam, _playerMovement.IsWalking);
 
     void SetIsFacingRightParam(bool isFacingRight)
     {
-        if (!isFacingRight) _anim.SetFloat("IsFacingRight", 0);
-        else _anim.SetFloat("IsFacingRight", 1);
+        if (!isFacingRight) _anim.SetFloat(_isFacingRightParam, 0);
+        else _anim.SetFloat(_isFacingRightParam, 1);
     }
+
+    void SetIsJumpingParam(bool isJumping) => _anim.SetBool(_isJumpingParam, isJumping);
 
     private void OnEnable()
     {
@@ -31,6 +50,8 @@ public class MovementAnimatorBinding : MonoBehaviour
         _playerMovement.OnStopWalking += SetIsWalkingParam;
 
         _playerMovement.OnFacingDirectionChanged += SetIsFacingRightParam;
+
+        _playerMovement.OnJumpingCheck += SetIsJumpingParam;
     }
 
     private void OnDisable()
@@ -39,5 +60,7 @@ public class MovementAnimatorBinding : MonoBehaviour
         _playerMovement.OnStopWalking -= SetIsWalkingParam;
 
         _playerMovement.OnFacingDirectionChanged -= SetIsFacingRightParam;
+
+        _playerMovement.OnJumpingCheck -= SetIsJumpingParam;
     }
 }

@@ -26,8 +26,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _jumpForce;
     [SerializeField] Transform _groundCheck;
     [SerializeField] float _groundCheckRadius;
+    bool _isJumping;
     bool _isGrounded;
     [SerializeField] LayerMask _whatIsGround;
+
+    public bool IsGrounded => _isGrounded;
+    public float VerticalSpeed => _rb.velocity.y;
 
     [Header("Components References")]
     [Space]
@@ -52,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
 
     public event Action<bool> OnFacingDirectionChanged;
 
+    public event Action<bool> OnJumpingCheck;
+
     private void Reset()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -63,13 +69,21 @@ public class PlayerMovement : MonoBehaviour
         OnStopWalkingEvent.AddListener(() => OnStopWalking?.Invoke());
     }
 
+    private void Update()
+    {
+        CheckGround();
+    }
+
     private void FixedUpdate()
     {
+        Jump();
+
         Walk();
 
         FaceWalkingDirection();
     }
 
+    #region Walk
     void StartWalking(InputAction.CallbackContext ctx) => OnStartWalkingEvent?.Invoke();
     void StopWalking(InputAction.CallbackContext ctx) => OnStopWalkingEvent?.Invoke();
 
@@ -93,8 +107,10 @@ public class PlayerMovement : MonoBehaviour
         float deceleration = (_speed / _decelerationTime) * Mathf.Sign(_rb.velocity.x) * -1;
         Vector2 decelerationForce = deceleration * Vector2.right;
         _rb.AddForce(decelerationForce);
-    }  
+    }
+    #endregion
 
+    #region Face Right Direction
     void FaceWalkingDirection()
     {
         if (_isFacingRight && HorizontalInput.x < 0)
@@ -113,29 +129,49 @@ public class PlayerMovement : MonoBehaviour
         _isFacingRight = !_isFacingRight;
         OnFacingDirectionChanged?.Invoke(_isFacingRight);
     }
+    #endregion
 
-    void Jump(InputAction.CallbackContext ctx)
+
+    #region Jump
+    void CheckJumpAction(InputAction.CallbackContext ctx)
+    {
+        if(ctx.started) _isJumping = true;
+        else if(ctx.canceled) _isJumping = false;
+
+        OnJumpingCheck?.Invoke(_isJumping);
+    }
+
+    void CheckGround()
     {
         _isGrounded = Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, _whatIsGround);
+    }
 
-        if(_isGrounded)
+    void Jump()
+    {
+        if(_isGrounded && _isJumping)
         {
             _rb.AddForce(new Vector2(0, _jumpForce));
         }
     }
+    #endregion
 
     private void OnEnable()
     {
         _walk.action.started += StartWalking;
         _walk.action.canceled += StopWalking;
-        _jump.action.started += Jump;
+
+        _jump.action.started += CheckJumpAction;
+        _jump.action.canceled += CheckJumpAction;
     }
 
     private void OnDisable()
     {
         _walk.action.started -= StartWalking;
         _walk.action.canceled -= StopWalking;
-        _jump.action.started -= Jump;
+
+        _jump.action.started -= CheckJumpAction;
+        _jump.action.canceled -= CheckJumpAction;
+
     }
 
     private void OnDrawGizmosSelected()
