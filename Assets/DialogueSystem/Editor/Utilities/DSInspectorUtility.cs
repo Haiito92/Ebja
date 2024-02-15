@@ -1,10 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEditor;
-using UnityEngine;
 
 public static class DSInspectorUtility
 {
+    public static void DrawDisabledFields(Action action)
+    {
+        EditorGUI.BeginDisabledGroup(true);
+
+        action.Invoke();
+
+        EditorGUI.EndDisabledGroup();
+    }
+
+
     public static void DrawHeader(string label)
     {
         EditorGUILayout.LabelField(label, EditorStyles.boldLabel);

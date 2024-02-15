@@ -27,4 +27,39 @@ public class DSDialogueContainerSO : ScriptableObject
 
         return dialogueGroupNames;
     }
+
+    public List <string> GetGroupedDialogueNames(DSDialogueGroupSO dialogueGroup, bool startingDialoguesOnly) 
+    {
+        List<DSDialogueSO> groupedDialogues = DialogueGroups[dialogueGroup];
+
+        List<string> groupedDialogueNames = new List<string>();
+
+        foreach(DSDialogueSO groupedDialogue in groupedDialogues)
+        {
+            if(startingDialoguesOnly && !groupedDialogue.IsStartingDialogue)
+            {
+                continue;
+            }
+
+            groupedDialogueNames.Add(groupedDialogue.DialogueName);
+        }
+
+        return groupedDialogueNames;
+    }
+
+    public List<string> GetUngroupedDialogueNames(bool startingDialoguesOnly)
+    {
+        List<string> ungroupedDialogueNames = new List<string>();
+
+        foreach (DSDialogueSO ungroupedDialogue in UngroupedDialogues)
+        {
+            if (startingDialoguesOnly && !ungroupedDialogue.IsStartingDialogue)
+            {
+                continue;
+            }
+            ungroupedDialogueNames.Add(ungroupedDialogue.DialogueName);
+        }
+
+        return ungroupedDialogueNames;
+    }
 }

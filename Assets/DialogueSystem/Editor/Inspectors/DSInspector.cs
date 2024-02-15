@@ -50,6 +50,14 @@ public class DSInspector : Editor
 
         DrawFiltersArea();
 
+        bool currentStartingDialogueOnlyFilter = _startingDialoguesOnlyProperty.boolValue;
+
+        List<string> dialogueNames;
+
+        string dialogueFolderPath = $"Assets/DialogueSystem/Runtime/Dialogues/{dialogueContainer.FileName}";
+
+        string dialogueInfoMessage;
+
         if(_groupedDialoguesProperty.boolValue)
         {
             List<string> dialogueGroupNames = dialogueContainer.GetDialogueGroupNames();
@@ -62,9 +70,32 @@ public class DSInspector : Editor
             }
 
             DrawDialogueGroupArea(dialogueContainer, dialogueGroupNames);
+
+            DSDialogueGroupSO dialogueGroup = (DSDialogueGroupSO) _dialogueGroupProperty.objectReferenceValue;
+
+            dialogueNames = dialogueContainer.GetGroupedDialogueNames(dialogueGroup, currentStartingDialogueOnlyFilter);
+
+            dialogueFolderPath += $"/Groups/{dialogueGroup.GroupName}/Dialogues";
+
+            dialogueInfoMessage = "There are no" + (currentStartingDialogueOnlyFilter ? " Starting" : "") + " Dialogues in this Dialogue Group.";
+        }
+        else
+        {
+            dialogueNames = dialogueContainer.GetUngroupedDialogueNames(currentStartingDialogueOnlyFilter);
+
+            dialogueFolderPath += "/Global/Dialogues";
+
+            dialogueInfoMessage = "There are no" + (currentStartingDialogueOnlyFilter ? " Starting" : "") + " Ungrouped Dialogues in this Dialogue Container.";
         }
 
-        DrawDialogueArea();
+        if( dialogueNames.Count == 0)
+        {
+            StopDrawing(dialogueInfoMessage); 
+
+            return;
+        }
+
+        DrawDialogueArea(dialogueNames, dialogueFolderPath);
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -111,23 +142,44 @@ public class DSInspector : Editor
 
         _dialogueGroupProperty.objectReferenceValue = selectedDialogueGroup;
 
-        _dialogueGroupProperty.DrawPropertyField();
+        DSInspectorUtility.DrawDisabledFields(() => _dialogueGroupProperty.DrawPropertyField());
 
         DSInspectorUtility.DrawSpace();
     }
 
-    private void DrawDialogueArea()
+    private void DrawDialogueArea(List<string> dialogueNames, string dialogueFolderPath)
     {
         DSInspectorUtility.DrawHeader("Dialogue");
 
-        _selectedDialogueIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue", _selectedDialogueIndexProperty, new string[] { });
+        int oldSelectedDialogueIndex = _selectedDialogueIndexProperty.intValue;
 
-        _dialogueProperty.DrawPropertyField();
+        DSDialogueSO oldDialogue = (DSDialogueSO) _dialogueProperty.objectReferenceValue;
+
+        bool isOldDialogueNull = oldDialogue == null;
+
+        string oldDialogueName = isOldDialogueNull ? "" : oldDialogue.DialogueName;
+
+        UpdateIndexOnNamesListUpdate(dialogueNames, _selectedDialogueIndexProperty, oldSelectedDialogueIndex, oldDialogueName, isOldDialogueNull);
+
+        _selectedDialogueIndexProperty.intValue = DSInspectorUtility.DrawPopup("Dialogue", _selectedDialogueIndexProperty, dialogueNames.ToArray());
+
+        string selectedDialogueName = dialogueNames[_selectedDialogueIndexProperty.intValue];
+
+        DSDialogueSO selectedDialogue = DSIOUtility.LoadAsset<DSDialogueSO>(dialogueFolderPath , selectedDialogueName);
+
+        _dialogueProperty.objectReferenceValue = selectedDialogue;
+
+        DSInspectorUtility.DrawDisabledFields(() => _dialogueProperty.DrawPropertyField());
+
     }
 
-    private void StopDrawing(string reason)
+    private void StopDrawing(string reason, MessageType messageType = MessageType.Info)
     {
-        DSInspectorUtility.DrawHelpBox(reason);
+        DSInspectorUtility.DrawHelpBox(reason, messageType);
+
+        DSInspectorUtility.DrawSpace();
+
+        DSInspectorUtility.DrawHelpBox("You need to select a Dialogue for this component to work properly at Runtime!", MessageType.Warning);
 
         serializedObject.ApplyModifiedProperties();
     }

@@ -167,12 +167,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8bef91a02f437e43a8a950b86e2add2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogueContainer: {fileID: 11400000, guid: fec45bd45b87d944e9e6ba61fb7e844d, type: 2}
-  _dialogueGroup: {fileID: 11400000, guid: effba9c6aa69b364f94296cf5eab3df8, type: 2}
-  _dialogue: {fileID: 0}
-  _groupedDialogues: 1
+  _dialogueContainer: {fileID: 11400000, guid: fce3ba3661821534090403bfead22922, type: 2}
+  _dialogueGroup: {fileID: 11400000, guid: c888e8ac96da9a1409642dd19af45767, type: 2}
+  _dialogue: {fileID: 11400000, guid: d17cf627f525718469936d1bf2fa1fe9, type: 2}
+  _groupedDialogues: 0
   _startingDialoguesOnly: 0
-  _selectedDialogueGroupIndex: 1
+  _selectedDialogueGroupIndex: 0
   _selectedDialogueIndex: 0
 --- !u!1 &1681436518
 GameObject:
