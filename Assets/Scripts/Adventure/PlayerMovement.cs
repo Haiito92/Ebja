@@ -10,8 +10,13 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     //Fields//
-    [Header("Walk Fields")]
-    [Space]
+
+    #region Inspector Only Fields
+    //Inspector
+    [SerializeField] bool _hideSetup;
+    [SerializeField] int _selectedActionIndex;
+    #endregion
+
     //Walk
     [SerializeField] float _speed;
     [SerializeField] float _accelerationTime;
@@ -20,8 +25,6 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 HorizontalInput => _walk.action.ReadValue<Vector2>();
     public bool IsWalking => HorizontalInput.x != 0;
 
-    [Header("Jump Fields")]
-    [Space]
     //Jump
     [SerializeField] float _jumpForce;
     [SerializeField] Transform _groundCheck;
@@ -33,20 +36,14 @@ public class PlayerMovement : MonoBehaviour
     public bool IsGrounded => _isGrounded;
     public float VerticalSpeed => _rb.velocity.y;
 
-    [Header("Components References")]
-    [Space]
     //References//
     [SerializeField] Rigidbody2D _rb;
 
     //InputReferences//
-    [Header("InputAction References")]
-    [Space]
     [SerializeField] InputActionReference _walk;
     [SerializeField] InputActionReference _jump;
 
     //Events//
-    [Header("Events")]
-    [Space]
     public UnityEvent OnStartWalkingEvent;
     public UnityEvent OnStopWalkingEvent;
 
