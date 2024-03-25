@@ -1,12 +1,13 @@
 {
-    "name": "Runtime",
+    "name": "DialogueSystemEditor",
     "rootNamespace": "",
     "references": [
-        "GUID:75469ad4d38634e559750d17036d5f7c",
-        "GUID:776d03a35f1b52c4a9aed9f56d7b4229",
-        "GUID:c861e059f3638934197f47582e51c2ac"
+        "GUID:c861e059f3638934197f47582e51c2ac",
+        "GUID:21b0c8d1703a94250bfac916590cea4f"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
