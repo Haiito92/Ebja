@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b31152e1acf5e4f8c5b9be7b44369c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hideSetup: 0
+  _selectedActionIndex: 0
   _speed: 4
   _accelerationTime: 0.3
   _decelerationTime: 0.3
@@ -388,7 +390,7 @@ GameObject:
   - component: {fileID: 1130518588636498526}
   - component: {fileID: 4266476122977837327}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player_Adventure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

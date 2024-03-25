@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IInteractable
 {
     abstract void Interact();
-    abstract void ShowUI();
-    abstract void HideUI();
+    abstract void ShowInteractionFX();
+    abstract void HideInteractionFX();
 }

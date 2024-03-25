@@ -29,7 +29,7 @@ public class PlayerInteract : MonoBehaviour
     }
 
 
-    #region CkeckForInteractableCoroutine;
+    #region CkeckForInteractableCoroutine
     void StartCheckForInteractable()
     {
         if( _checkForInteractable == null )
@@ -49,8 +49,8 @@ public class PlayerInteract : MonoBehaviour
 
             if (currentInteractable != lastInteractable)
             {
-                lastInteractable?.HideUI();
-                currentInteractable?.ShowUI();
+                lastInteractable?.HideInteractionFX();
+                currentInteractable?.ShowInteractionFX();
             }
 
             yield return null;

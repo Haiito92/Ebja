@@ -1,27 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class NPC : MonoBehaviour, IInteractable
+public class NPC : MonoBehaviour, IInteractable, ITalker
 {
     [SerializeField] string _name;
 
     [SerializeField] SpriteRenderer _interactionFX;
 
+    [SerializeField] DSDialogue _dialogue;
+
+    #region IInteractable
     public void Interact()
     {
-        Debug.Log("Interact with : " + _name);
+        TriggerDialogue(_dialogue);
     }
 
-    public void ShowUI()
+    public void ShowInteractionFX()
     {
-        Debug.Log("Show UI of : " + _name);
         _interactionFX.enabled = true;
     }
 
-    public void HideUI()
+    public void HideInteractionFX()
     {
-        Debug.Log("Hide UI of : " + _name);
         _interactionFX.enabled = false;
     }
+    #endregion
+
+    #region ITalker
+    public void TriggerDialogue(DSDialogue dialogue)
+    {
+        if (dialogue == null || dialogue.StartingDialogue == null)
+        {
+            Debug.LogError("No Dialogue to trigger");
+            return;
+        }
+
+        DialogueManager.Instance.StartDialogue(dialogue);
+    }
+    #endregion
 }

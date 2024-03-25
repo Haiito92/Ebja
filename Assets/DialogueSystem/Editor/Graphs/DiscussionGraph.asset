@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6c3634be7d34a74dadea26a5a7e0524, type: 3}
+  m_Name: DiscussionGraph
+  m_EditorClassIdentifier: 
+  <FileName>k__BackingField: Discussion
+  <Groups>k__BackingField: []
+  <Nodes>k__BackingField:
+  - <ID>k__BackingField: 68aeca71-c4f4-4ff5-8bde-3dc84803317e
+    <Name>k__BackingField: Bye
+    <Text>k__BackingField: Nice !
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialogue
+      <NodeID>k__BackingField: 
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 0
+    <Position>k__BackingField: {x: 727, y: 470}
+  - <ID>k__BackingField: bda3eb1f-5411-40cf-87c2-79898a69f189
+    <Name>k__BackingField: Hi
+    <Text>k__BackingField: Hi ! How are you?
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Good !
+      <NodeID>k__BackingField: 68aeca71-c4f4-4ff5-8bde-3dc84803317e
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 1
+    <Position>k__BackingField: {x: 408, y: 446}
+  <OldGroupNames>k__BackingField: []
+  <OldUngroupedNodeNames>k__BackingField:
+  - Bye
+  - Hi
+  <OldGroupedNodeNames>k__BackingField:
+    list: []
