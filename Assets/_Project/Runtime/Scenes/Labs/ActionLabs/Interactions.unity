@@ -2410,7 +2410,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3946836549000045191, guid: 119dd94512d1de3469ba9e0bded31e29, type: 3}
       propertyPath: _hideSetup
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6647321997594833823, guid: 119dd94512d1de3469ba9e0bded31e29, type: 3}
       propertyPath: m_LocalPosition.x

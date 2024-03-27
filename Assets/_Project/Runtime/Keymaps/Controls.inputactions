@@ -2,7 +2,7 @@
     "name": "Controls",
     "maps": [
         {
-            "name": "Controls",
+            "name": "AdventureControls",
             "id": "89a12288-f34b-4368-b9d1-9d30ad2cca1d",
             "actions": [
                 {
@@ -108,6 +108,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Empty",
+            "id": "7ed2a942-ffa3-4ea9-9090-5365ee126f3f",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "9fbd0c4b-1ea4-4c37-aafa-584bbb931422",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "828fdf30-575d-4b37-9269-30d6a3cab9d7",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

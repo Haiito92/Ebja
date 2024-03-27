@@ -20,6 +20,10 @@ namespace _Project.Runtime.Scripts.Global.UI
         [SerializeField, Tooltip("Number of letters written per second.")] private float _writingRate;
         private Coroutine _writingCoroutine; //Writing Sentence IEnumerator
         
+        //Events
+        public event Action OnDialogueDisplayStart;
+        public event Action OnDialogueDisplayEnd;
+        
         public void StartNewDialogue(DSDialogue newDialogue)
         {
             //The logic here suppose that we are only using single choice nodes, needs to be adapted for cases where you have both single choice and multiple choices nodes.
@@ -77,6 +81,7 @@ namespace _Project.Runtime.Scripts.Global.UI
             }
             
             HideUI();
+            OnDialogueDisplayEnd?.Invoke();
         }
         
         #region Show/Hide
