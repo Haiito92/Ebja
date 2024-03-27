@@ -2,8 +2,14 @@ using UnityEngine;
 
 namespace _Project.Runtime.Scripts.Global.Managers
 {
+    using UI;
+    
     public class DialogueManager : MonoBehaviour
     {
+        //Ref to UI
+        private DialogueUI _dialogueUI;
+        
+        
         #region Singleton
         private static DialogueManager _instance;
         public static DialogueManager Instance => _instance;
