@@ -1,7 +1,9 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class GameManager : MonoBehaviour
+namespace _Project.Runtime.Scripts.Global.Managers
 {
+    public class GameManager : MonoBehaviour
+    {
     
+    }
 }

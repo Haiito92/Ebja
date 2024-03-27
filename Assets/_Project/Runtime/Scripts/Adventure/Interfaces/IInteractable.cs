@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IInteractable
+namespace _Project.Runtime.Scripts.Adventure.Interfaces
 {
-    abstract void Interact();
-    abstract void ShowInteractionFX();
-    abstract void HideInteractionFX();
+    public interface IInteractable
+    {
+        abstract void Interact();
+        abstract void ShowInteractionFX();
+        abstract void HideInteractionFX();
+    }
 }

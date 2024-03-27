@@ -1,33 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogueManager : MonoBehaviour
+namespace _Project.Runtime.Scripts.Global.Managers
 {
-    #region Singleton
-    private static DialogueManager _instance;
-    public static DialogueManager Instance => _instance;
-
-    private void InitialiazeSingleton()
+    public class DialogueManager : MonoBehaviour
     {
-        if(_instance != null && _instance != this)
+        #region Singleton
+        private static DialogueManager _instance;
+        public static DialogueManager Instance => _instance;
+
+        private void InitialiazeSingleton()
         {
-            Destroy(this.gameObject);
+            if(_instance != null && _instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                _instance = this;
+            }
         }
-        else
+        #endregion
+
+        private void Awake()
         {
-            _instance = this;
+            InitialiazeSingleton();
         }
-    }
-    #endregion
 
-    private void Awake()
-    {
-        InitialiazeSingleton();
-    }
-
-    public void StartDialogue(DSDialogue dialogue)
-    {
-        Debug.Log($"Dialogue Started : {dialogue.StartingDialogue.DialogueName}");
+        public void StartDialogue(DSDialogue dialogue)
+        {
+            Debug.Log($"Dialogue Started : {dialogue.StartingDialogue.DialogueName}");
+        }
     }
 }

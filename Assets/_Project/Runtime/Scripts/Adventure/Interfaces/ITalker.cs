@@ -1,6 +1,7 @@
-using UnityEngine;
-
-public interface ITalker
+namespace _Project.Runtime.Scripts.Adventure.Interfaces
 {
-    void TriggerDialogue(DSDialogue dialogue);
+    public interface ITalker
+    {
+        void TriggerDialogue(DSDialogue dialogue);
+    }
 }
