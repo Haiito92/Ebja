@@ -20,43 +20,9 @@ public class DSDialogue : MonoBehaviour
     [SerializeField] private DSDialogueGroupSO _dialogueGroup;
     [SerializeField] private DSDialogueSO _dialogue;
 
-    /* Dialogue */
-
-    private DSDialogueSO _startingDialogue;
-
     #region Properties
-
-    public DSDialogueSO StartingDialogue => _startingDialogue;
-
+    
+    public DSDialogueSO Dialogue => _dialogue;
+    
     #endregion
-
-    private void Awake()
-    {
-        SetStartingDialogue();
-        //if(_startingDialogue != null ) Debug.Log(_startingDialogue.DialogueName);
-    }
-
-    private void SetStartingDialogue()
-    {
-        foreach(List<DSDialogueSO> dialogues in _dialogueContainer.DialogueGroups.Values)
-        {
-            foreach(DSDialogueSO dialogue in dialogues)
-            {
-                if(dialogue.IsStartingDialogue)
-                {
-                    _startingDialogue = dialogue;
-                    return;
-                }
-            }
-        }
-
-        foreach(DSDialogueSO dialogue in _dialogueContainer.UngroupedDialogues)
-        {
-            if (dialogue.IsStartingDialogue)
-            {
-                _startingDialogue = dialogue;
-                return;
-            }
-        }
-    }
 }

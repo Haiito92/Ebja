@@ -228,6 +228,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NPC (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5624501727253668268, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2408,10 +2412,6 @@ PrefabInstance:
       propertyPath: _hideSetup
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3946836549000045191, guid: 119dd94512d1de3469ba9e0bded31e29, type: 3}
-      propertyPath: _selectedActionIndex
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6647321997594833823, guid: 119dd94512d1de3469ba9e0bded31e29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.45
@@ -2512,14 +2512,22 @@ PrefabInstance:
     - target: {fileID: 5102751561501110016, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
       propertyPath: _dialogue
       value: 
-      objectReference: {fileID: 11400000, guid: 91d1391c616335b4abac3023d11645f9, type: 2}
+      objectReference: {fileID: 11400000, guid: 9438eea8633b2b941b4c684ad09d2541, type: 2}
+    - target: {fileID: 5102751561501110016, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
+      propertyPath: _dialogueGroup
+      value: 
+      objectReference: {fileID: 11400000, guid: 8815ca67b68fdea42b723a9701451b90, type: 2}
+    - target: {fileID: 5102751561501110016, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
+      propertyPath: _groupedDialogues
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5102751561501110016, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
       propertyPath: _dialogueContainer
       value: 
-      objectReference: {fileID: 11400000, guid: 962025feb3182aa499909b18b76d7ab0, type: 2}
+      objectReference: {fileID: 11400000, guid: f287fa3f5a288764f86d5a932f7a0c7b, type: 2}
     - target: {fileID: 5102751561501110016, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
       propertyPath: _startingDialoguesOnly
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5624501727253668268, guid: 90c94ba42a2fb8b46adb39080fba9c37, type: 3}
       propertyPath: m_Name

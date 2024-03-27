@@ -33,7 +33,7 @@ namespace _Project.Runtime.Scripts.Adventure.Characters.NPC
         #region ITalker
         public void TriggerDialogue(DSDialogue dialogue)
         {
-            if (dialogue == null || dialogue.StartingDialogue == null)
+            if (dialogue == null)
             {
                 Debug.LogError("No Dialogue to trigger");
                 return;

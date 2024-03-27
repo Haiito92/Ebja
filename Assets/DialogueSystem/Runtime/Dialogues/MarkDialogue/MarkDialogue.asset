@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec63620abb3b1143833a2a167a76725, type: 3}
+  m_Name: MarkDialogue
+  m_EditorClassIdentifier: 
+  <FileName>k__BackingField: MarkDialogue
+  <DialogueGroups>k__BackingField:
+    list:
+    - Key: {fileID: 11400000, guid: 8815ca67b68fdea42b723a9701451b90, type: 2}
+      Value:
+      - {fileID: 11400000, guid: 9438eea8633b2b941b4c684ad09d2541, type: 2}
+      - {fileID: 11400000, guid: 84483c2d16abe5146b93120d203b764e, type: 2}
+      - {fileID: 11400000, guid: c26cce5d85076fc49b6188f931c00d56, type: 2}
+  <UngroupedDialogues>k__BackingField: []

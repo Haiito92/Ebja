@@ -7,7 +7,7 @@ namespace _Project.Runtime.Scripts.Global.Managers
     public class DialogueManager : MonoBehaviour
     {
         //Ref to UI
-        private DialogueUI _dialogueUI;
+        [SerializeField] private DialogueUI _dialogueUI;
         
         
         #region Singleton
@@ -34,7 +34,7 @@ namespace _Project.Runtime.Scripts.Global.Managers
 
         public void StartDialogue(DSDialogue dialogue)
         {
-            Debug.Log($"Dialogue Started : {dialogue.StartingDialogue.DialogueName}");
+            _dialogueUI.StartNewDialogue(dialogue);
         }
     }
 }
